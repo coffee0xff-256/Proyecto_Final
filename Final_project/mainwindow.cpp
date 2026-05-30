@@ -11,7 +11,9 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    //****Start background move******
+    //***********************Start background move******
+
+
     //todo esto es para el fondo del menu, para que el tengo como el movimiento de fondo//
 
     setFixedSize(1536,1024);
