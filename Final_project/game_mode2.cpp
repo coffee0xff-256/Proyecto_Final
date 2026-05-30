@@ -15,4 +15,28 @@ void Game_mode2::paintEvent(QPaintEvent *event){
     painter.setPen(Qt::white);
     painter.drawText(450,360,"GAME MODE 2");
 //************ESQUELETO*****************************
+
+//***********Mapa vista cenital**********************
+    int tilesize = 50;
+    for(int fila = 0;fila < 8;fila++){
+        for(int columna = 0;columna < 8; columna++){
+            if(map1[fila][columna]== 1){
+                painter.fillRect(columna * tilesize , fila * tilesize , tilesize,tilesize,Qt::white);
+            }
+
+            painter.drawRect(columna * tilesize , fila * tilesize , tilesize,tilesize);
+        }
+}
+
+//Aqui dibujo el personaje
+
+painter.setBrush(Qt::red);
+painter.drawEllipse(
+        playerx * tilesize - 5,
+        playery * tilesize -5,
+        10,10
+        );
+    ;
+
+//***********Mapa vista cenital**********************
 }
