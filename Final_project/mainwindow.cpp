@@ -10,6 +10,10 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    //****Start background move******
+    //todo esto es para el fondo del menu, para que el tengo como el movimiento de fondo//
+
     setFixedSize(1536,1024);
     //pongo lo del background en esta parte del constructor (esto lo vi en clase del laboratorio)
     position_x = 0;
@@ -26,7 +30,6 @@ MainWindow::MainWindow(QWidget *parent)
     QPixmap imagen1("background3.png");
     //escalar la imagen para cuando maximicemos no queden esos huecos blancos
     QPixmap imagen2("background3.png");
-
     background1->setPixmap(imagen1);
     background2->setPixmap(imagen2);
     background1->resize(1536,1024);
@@ -39,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(timer,&QTimer::timeout,this, &MainWindow::background_move);
     timer->start(16);
 
-
+//  *******************END Background move******************************
 
 }
 
