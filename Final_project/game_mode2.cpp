@@ -58,8 +58,15 @@ painter.drawEllipse(
 //***********************Movimiento********************************
 
 //**********************Raycasting********************************
-    int numrays = 60;
+    int numrays = 180;
+ //**********************3D***************************************
+    //el cielo y el piso
 
+    painter.fillRect(400,0,width()-400,height()/2,Qt::darkBlue);
+    painter.fillRect(400,height()/2,width()-400,height()/2,Qt::darkGray);
+
+
+ //**********************3D***************************************
 
     for(int i = 0; i < numrays; i++)
     {
@@ -89,9 +96,24 @@ painter.drawEllipse(
             rayx * tilesize,
             rayy * tilesize
             );
+ //**********************Raycasting********************************
+
+ //**********************3D***************************************
+
+        double distancia = sqrt((rayx-playerx)*(rayx *playerx)+(rayy-playery)*(rayy-playery));
+        distancia *= cos(rayangle -angle);
+        int wallaltura = 1080/ distancia;
+        int screenx = 450+i * 4;
+
+
+        int wallTop = height()/2 - wallaltura/2;
+        int wallBottom = height()/2 + wallaltura/2;
+
+        painter.setPen(QPen(Qt::white,4));
+        painter.drawLine(screenx,wallTop,screenx,wallBottom);
     }
 
-//**********************Raycasting********************************
+ //**********************3D***************************************
 }
 
 //***********************Movimiento********************************
