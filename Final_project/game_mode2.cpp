@@ -60,42 +60,50 @@ painter.drawEllipse(
 
 //***********************Movimiento********************************
 
-void Game_mode2::keyPressEvent(QKeyEvent *event){
+void Game_mode2::keyPressEvent(QKeyEvent *event)
+{
     double velocidad = 0.2;
     double rotacion = 0.1;
 
-    switch(event->key()){
-        playerx += cos(angle) * velocidad;
-        playery += sin(angle) * velocidad;
-
-        break;
-
+    switch(event->key())
+    {
     case Qt::Key_W:
+    {
+        double newx = playerx + cos(angle) * velocidad;
+        double newy = playery + sin(angle) * velocidad;
 
-        playerx += cos(angle) * velocidad;
-        playery += sin(angle) * velocidad;
-
-        break;
-
-    case Qt::Key_S:
-
-        playerx -= cos(angle) * velocidad;
-        playery -= sin(angle) * velocidad;
-
-        break;
-
-    case Qt::Key_A:
-
-        angle -= rotacion;
-
-        break;
-
-    case Qt::Key_D:
-
-        angle += rotacion;
+        if(map1[(int)newy][(int)newx] == 0)
+        {
+            playerx = newx;
+            playery = newy;
+        }
 
         break;
     }
+
+    case Qt::Key_S:
+    {
+        double newx = playerx - cos(angle) * velocidad;
+        double newy = playery - sin(angle) * velocidad;
+
+        if(map1[(int)newy][(int)newx] == 0)
+        {
+            playerx = newx;
+            playery = newy;
+        }
+
+        break;
+    }
+
+    case Qt::Key_Left:
+        angle -= rotacion;
+        break;
+
+    case Qt::Key_Right:
+        angle += rotacion;
+        break;
+    }
+
     update();
 }
 //***********************Movimiento********************************
