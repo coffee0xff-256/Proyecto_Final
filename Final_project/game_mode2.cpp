@@ -56,6 +56,31 @@ painter.drawEllipse(
     painter.drawLine(x1,y1,x2,y2);
 
 //***********************Movimiento********************************
+
+//**********************Raycasting********************************
+    double rayx = playerx;
+    double rayy = playery;
+    double paso = 0.02;
+
+    while(true){
+        rayx += cos(angle) * paso;
+        rayy += sin(angle) * paso;
+
+        if(map1[(int)rayy][(int)rayx]==1){
+            break;
+        }
+    }
+
+
+    // este el rasho laser
+    painter.setPen(QPen(Qt::red,2));
+    painter.drawLine(playerx *tilesize,playery * tilesize, rayx * tilesize, rayy * tilesize);
+
+    painter.setBrush(Qt::blue);
+
+    painter.drawEllipse(rayx * tilesize -4,rayy * tilesize -4,8,8);
+
+//**********************Raycasting********************************
 }
 
 //***********************Movimiento********************************
