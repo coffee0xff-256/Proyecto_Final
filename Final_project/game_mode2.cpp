@@ -4,8 +4,8 @@
 Game_mode2::Game_mode2(QWidget *parent)
     : QWidget{parent}
 {
-    resize(1080,720);
-    setWindowTitle("Game_mode1");
+    setFixedSize(1536,1024);
+    setWindowTitle("Game_mode2");
 
 //***********************Movimiento********************************
     setFocusPolicy(Qt::StrongFocus);
@@ -58,7 +58,7 @@ painter.drawEllipse(
 //***********************Movimiento********************************
 
 //**********************Raycasting********************************
-    int numrays = 180;
+    int numrays = 120;
  //**********************3D***************************************
     //el cielo y el piso
 
@@ -102,6 +102,15 @@ painter.drawEllipse(
 
         double distancia = sqrt((rayx-playerx)*(rayx *playerx)+(rayy-playery)*(rayy-playery));
         distancia *= cos(rayangle -angle);
+
+
+        //Aqui van las sombras del 3d
+        int brillo = 255 - distancia * 40;
+        if(brillo < 30){brillo = 30;}
+        if(brillo > 255){brillo = 255;}
+
+        QColor color(brillo,brillo,brillo);
+
         int wallaltura = 1080/ distancia;
         int screenx = 450+i * 4;
 
@@ -109,7 +118,7 @@ painter.drawEllipse(
         int wallTop = height()/2 - wallaltura/2;
         int wallBottom = height()/2 + wallaltura/2;
 
-        painter.setPen(QPen(Qt::white,4));
+        painter.setPen(QPen(color,4));
         painter.drawLine(screenx,wallTop,screenx,wallBottom);
     }
 
