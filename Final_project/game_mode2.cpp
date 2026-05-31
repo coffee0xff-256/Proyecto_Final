@@ -7,6 +7,10 @@ Game_mode2::Game_mode2(QWidget *parent)
     resize(1080,720);
     setWindowTitle("Game_mode1");
 
+//***********************Movimiento********************************
+    setFocusPolicy(Qt::StrongFocus);
+//***********************Movimiento********************************
+
 }
 //************ESQUELETO*****************************
 void Game_mode2::paintEvent(QPaintEvent *event){
@@ -39,4 +43,125 @@ painter.drawEllipse(
     ;
 
 //***********Mapa vista cenital**********************
+
+//***********************Movimiento********************************
+    //Aqui hay movimiento y visión
+
+    int linelenght = 30;
+    int x1 = playerx * tilesize;
+    int y1 = playery * tilesize;
+    int x2 = x1 + cos(angle) * linelenght;
+    int y2 = y1 + sin(angle) * linelenght;
+    painter.setPen(QPen(Qt::green,2));
+    painter.drawLine(x1,y1,x2,y2);
+
+//***********************Movimiento********************************
+
+//**********************Raycasting********************************
+    int numrays = 180;
+ //**********************3D***************************************
+    //el cielo y el piso
+
+    painter.fillRect(400,0,width()-400,height()/2,Qt::darkBlue);
+    painter.fillRect(400,height()/2,width()-400,height()/2,Qt::darkGray);
+
+
+ //**********************3D***************************************
+
+    for(int i = 0; i < numrays; i++)
+    {
+        double rayangle =
+            angle - fov/2 +
+            (double)i / numrays * fov;
+
+        double rayx = playerx;
+        double rayy = playery;
+
+        double paso = 0.02;
+
+        while(true)
+        {
+            rayx += cos(rayangle) * paso;
+            rayy += sin(rayangle) * paso;
+
+            if(map1[(int)rayy][(int)rayx] == 1)
+                break;
+        }
+
+        painter.setPen(QPen(Qt::red,1));
+
+        painter.drawLine(
+            playerx * tilesize,
+            playery * tilesize,
+            rayx * tilesize,
+            rayy * tilesize
+            );
+ //**********************Raycasting********************************
+
+ //**********************3D***************************************
+
+        double distancia = sqrt((rayx-playerx)*(rayx *playerx)+(rayy-playery)*(rayy-playery));
+        distancia *= cos(rayangle -angle);
+        int wallaltura = 1080/ distancia;
+        int screenx = 450+i * 4;
+
+
+        int wallTop = height()/2 - wallaltura/2;
+        int wallBottom = height()/2 + wallaltura/2;
+
+        painter.setPen(QPen(Qt::white,4));
+        painter.drawLine(screenx,wallTop,screenx,wallBottom);
+    }
+
+ //**********************3D***************************************
 }
+
+//***********************Movimiento********************************
+
+void Game_mode2::keyPressEvent(QKeyEvent *event)
+{
+    double velocidad = 0.2;
+    double rotacion = 0.1;
+
+    switch(event->key())
+    {
+    case Qt::Key_W:
+    {
+        double newx = playerx + cos(angle) * velocidad;
+        double newy = playery + sin(angle) * velocidad;
+
+        if(map1[(int)newy][(int)newx] == 0)
+        {
+            playerx = newx;
+            playery = newy;
+        }
+
+        break;
+    }
+
+    case Qt::Key_S:
+    {
+        double newx = playerx - cos(angle) * velocidad;
+        double newy = playery - sin(angle) * velocidad;
+
+        if(map1[(int)newy][(int)newx] == 0)
+        {
+            playerx = newx;
+            playery = newy;
+        }
+
+        break;
+    }
+
+    case Qt::Key_Left:
+        angle -= rotacion;
+        break;
+
+    case Qt::Key_Right:
+        angle += rotacion;
+        break;
+    }
+
+    update();
+}
+//***********************Movimiento********************************

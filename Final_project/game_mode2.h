@@ -2,6 +2,8 @@
 #define GAME_MODE2_H
 
 #include <QWidget>
+#include <QKeyEvent>
+#include <cmath>
 
 class Game_mode2 : public QWidget
 {
@@ -27,15 +29,24 @@ private:
 
  //***********************Mapa vista cenital************************
 
+//***********************Movimiento********************************
+    double angle = 0;
+//***********************Movimiento********************************
+
+//**********************Raycasting********************************
+    double fov = M_PI /3.0;
+//**********************Raycasting********************************
 signals:
 
 protected:
 //************ESQUELETO*****************************
-    void paintEvent(QPaintEvent *event);
+    void paintEvent(QPaintEvent *event) override ;
 //************ESQUELETO*****************************
 
-
-
+//***********************Movimiento********************************
+   //void paintEvent(QPaintEvent * event) override;
+   void keyPressEvent(QKeyEvent * event) override;
+//***********************Movimiento********************************
 };
 
 #endif // GAME_MODE2_H
