@@ -24,10 +24,15 @@ private:
                       {1,0,0,0,0,0,0,1},
                       {1,1,1,1,1,1,1,1}};
 
+    int vida = 100;
     double playerx = 2.5;
     double playery = 2.5;
+ //***********************Enemy************************
 
- //***********************Mapa vista cenital************************
+    bool enemyalive = true;
+    double enemyx = 5.5;
+    double enemyy = 3.5;
+
 
 //***********************Movimiento********************************
     double angle = 0;
