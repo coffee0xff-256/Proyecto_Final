@@ -31,6 +31,9 @@ void Game_mode2::paintEvent(QPaintEvent *event){
             painter.drawRect(columna * tilesize , fila * tilesize , tilesize,tilesize);
         }
 }
+    double dx = playerx - enemyx;
+    double dy = playery - enemyy;
+
 
 //Aqui dibujo el personaje
 
@@ -40,7 +43,13 @@ painter.drawEllipse(
         playery * tilesize -5,
         10,10
         );
-    ;
+
+
+//Aqui dibujo el enemigo
+
+if(enemyalive)
+{painter.setBrush(Qt::blue);
+painter.drawEllipse(enemyx * tilesize - 5,enemyy * tilesize - 5,10,10);}
 
 //***********Mapa vista cenital**********************
 
@@ -88,7 +97,7 @@ painter.drawEllipse(
                 break;
         }
 
-        painter.setPen(QPen(Qt::red,1));
+        painter.setPen(QPen(Qt::gray,1));
 
         painter.drawLine(
             playerx * tilesize,
@@ -123,6 +132,41 @@ painter.drawEllipse(
     }
 
  //**********************3D***************************************
+
+//***********************distancia enemigo************************
+    double distanciaEnemigo = sqrt(dx *dx+dy*dy);
+    if(distanciaEnemigo > 0.2){
+    if( enemyalive && distanciaEnemigo > 0.2)
+        {vida--;}}
+    if(vida < 0){vida = 0;}
+    if(vida <= 0)
+    {
+        painter.setPen(Qt::red);
+        painter.drawText(width()/2 - 50,height()/2,"GAME OVER");
+    }
+
+    painter.setPen(Qt::white);
+    painter.drawText(500,50,QString("Distancia: %1").arg(distanciaEnemigo));
+    if(distanciaEnemigo > 0.2)
+    {
+        double velocidadEnemigo = 0.01;
+        enemyx += (dx / distanciaEnemigo) * velocidadEnemigo;
+        enemyy += (dy / distanciaEnemigo) * velocidadEnemigo;
+    }
+
+    painter.setPen(Qt::white);
+    painter.drawText(500,30,QString("Vida: %1").arg(vida));
+
+    int centerx = width() / 2;
+    int centery = height() / 2;
+//lineas verticales
+    painter.setPen(QPen(Qt::white,2));
+    painter.drawLine(
+        centerx -10, centery, centerx+10,centery);
+
+//lineas horizontales
+    painter.setPen(QPen(Qt::white,2));
+    painter.drawLine(centerx , centery-10, centerx,centery+10);
 }
 
 //***********************Movimiento********************************
@@ -169,6 +213,33 @@ void Game_mode2::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Right:
         angle += rotacion;
         break;
+
+    case Qt::Key_Space:
+    {
+        if(enemyalive)
+        {
+            double dx = enemyx - playerx;
+            double dy = enemyy - playery;
+
+            double distancia =
+                sqrt(dx*dx + dy*dy);
+
+            double dirx = dx / distancia;
+            double diry = dy / distancia;
+
+            double viewx = cos(angle);
+            double viewy = sin(angle);
+
+            double dot =dirx * viewx +diry * viewy;
+            if(dot > 0.95 && distancia < 4.0)
+            {
+                enemyalive = false;
+            }
+        }
+
+        break;
+    }
+
     }
 
     update();
