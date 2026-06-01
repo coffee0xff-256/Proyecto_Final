@@ -121,7 +121,7 @@ painter.drawEllipse(enemyx * tilesize - 5,enemyy * tilesize - 5,10,10);}
         QColor color(brillo,brillo,brillo);
 
         int wallaltura = 1080/ distancia;
-        int screenx = 450+i * 4;
+        int screenx = 700+i * 5;
 
 
         int wallTop = height()/2 - wallaltura/2;
@@ -167,6 +167,8 @@ painter.drawEllipse(enemyx * tilesize - 5,enemyy * tilesize - 5,10,10);}
 //lineas horizontales
     painter.setPen(QPen(Qt::white,2));
     painter.drawLine(centerx , centery-10, centerx,centery+10);
+
+
 }
 
 //***********************Movimiento********************************
