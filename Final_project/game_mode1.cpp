@@ -65,3 +65,42 @@ void player::keydrop(int key){
 
 }
 
+//Logica del balon
+
+ball:: ball(float x, float y){
+    this->x = x;
+    this->y = y;
+    this->vx = 0;
+    this->vy = 0;
+    this->radius = 20;
+    this->startX = x;
+    this-> startY = y;
+
+    this-> gravity = 1200.0f;
+    this-> rebotar = 0.6f;
+    this-> friction = 0.85f;
+
+}
+
+
+//Aplicacion de la gravedad para el balon.
+
+void ball::move(float dt){
+
+    vy += gravity * dt;
+    x += vx * dt;
+    y += vy * dt;
+
+}
+
+//Invertir la velocidad vertical y frena horizontal.
+
+
+void ball::reset(){
+    x =startX;
+    y = startY;
+    vx = 0;
+    vy = 0;
+
+}
+
