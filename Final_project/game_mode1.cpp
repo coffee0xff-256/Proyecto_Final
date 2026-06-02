@@ -40,6 +40,16 @@ void player::move(float dt)
 
 }
 
+//Permite hacer que el player 2 manipule el moviemiento de manera directamente.
+void player::controlIA(bool left, bool right){
+    pushIzq = left;
+    pushDer = right;
+}
+
+
+void player::golpear(){}
+bool player::golpeando(){return false;}
+
 //Push up only that is in the floor.
 
 
@@ -120,8 +130,22 @@ Game_mode1::Game_mode1(QWidget *parent)
     // Player 1 teclado para el desarrollo de juego.
     player1 = new player(100, levelfloor - 80, Qt::Key_A, Qt::Key_D, Qt::Key_W);
 
+    //Asigancion de player 2 va sin teclas ya que es una implementacion de una IA
+
+    player2 = new player(windowwidth - 160, levelfloor - 80,0, 0, 0);
+
     // Balon empieza desde el centro.
     balon = new ball(windowwidth / 2.0f, levelfloor / 2.0f);
+
+
+    //Primera implementacion de sprites personaje "Alex" prueba.
+
+    spriteBall = QPixmap(":/Balon.png");
+    spriteRun =  QPixmap("/Run_Alex.png");
+    spriteSalto =  QPixmap("/Run_Alex.png");
+    spriteGolpe=QPixmap("/Run_Alex.png");
+
+
 
     // Timer para que vaya a 60fps
     gameTimer = new QTimer(this);
