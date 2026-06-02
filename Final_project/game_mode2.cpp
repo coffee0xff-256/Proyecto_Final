@@ -103,7 +103,7 @@ void Game_mode2::paintEvent(QPaintEvent *event) {
 
     if (distanciaEnemigo > 0.2) {
         if (enemyalive) {
-            vida--;
+            if(distanciaEnemigo < 0.7){vida --;}
 
             double dx2 = enemyx - playerx;
             double dy2 = enemyy - playery;
@@ -141,13 +141,31 @@ void Game_mode2::paintEvent(QPaintEvent *event) {
         // Movimiento del enemigo (corregido para que no transpasen las paredes)
         double velocidadEnemigo = 0.01;
 
-        double newEnemyX = enemyx + (dx / distanciaEnemigo) * velocidadEnemigo;
-        double newEnemyY = enemyy + (dy / distanciaEnemigo) * velocidadEnemigo;
+        double moveX = (dx / distanciaEnemigo) * velocidadEnemigo;
+        double moveY = (dy / distanciaEnemigo) * velocidadEnemigo;
 
+        double newEnemyX = enemyx + moveX;
+        double newEnemyY = enemyy + moveY;
+
+        // Movimiento normal
         if(map1[(int)newEnemyY][(int)newEnemyX] == 0)
         {
             enemyx = newEnemyX;
             enemyy = newEnemyY;
+        }
+        else
+        {
+            // Intentar mover solo en X
+            if(map1[(int)enemyy][(int)newEnemyX] == 0)
+            {
+                enemyx = newEnemyX;
+            }
+
+            // Intentar mover solo en Y
+            if(map1[(int)newEnemyY][(int)enemyx] == 0)
+            {
+                enemyy = newEnemyY;
+            }
         }
     }
 
