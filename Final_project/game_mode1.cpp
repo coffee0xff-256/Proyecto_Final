@@ -141,9 +141,9 @@ Game_mode1::Game_mode1(QWidget *parent)
     //Primera implementacion de sprites personaje "Alex" prueba.
 
     spriteBall = QPixmap(":/Balon.png");
-    spriteRun =  QPixmap("/Run_Alex.png");
-    spriteSalto =  QPixmap("/Run_Alex.png");
-    spriteGolpe=QPixmap("/Run_Alex.png");
+    spriteRun =  QPixmap(":/Run_Alex.png");
+    spriteSalto =  QPixmap(":/Salto_Alex.png");
+    spriteGolpe=QPixmap(":/Golpeo_Alex.png");
 
 
 
@@ -237,5 +237,129 @@ void Game_mode1::actualizar(){
         balon->vx = -balon->vx * 0.7f;
     }
 
+    //Direccion visual de los players
+
+    if(player1 -> vx > 10) Frente_derecho_player1 = true;
+    if(player1 -> vx < -10) Frente_derecho_player1 = false;
+
+
+    //Logica para el player 2.
+    updateIA();
+
+    if(++animTick >= 6){
+        animTick = 0;
+        animFramePlayer1 = (animFramePlayer1 + 1) % 4;
+        animFramePlayer2 = (animFramePlayer2 + 1) % 4;
+        animFrameBall = (animFrameBall + 1) % 7;
+    }
+
     update();
+}
+
+
+//Desarrollo del render
+
+void Game_mode1::paintEvent(QPaintEvent *)
+{
+    QPainter p(this);
+    p.setRenderHint(QPainter::SmoothPixmapTransform);
+
+    p.fillRect(0,0,windowwidth,240,QColor(100, 180, 240));
+    p.fillRect(0,240,windowwidth, levelfloor - 240,QColor(55,  140, 55));
+    p.fillRect(0,levelfloor,windowwidth, windowheight - levelfloor, QColor(101, 67, 33));
+    p.fillRect(0,levelfloor - 4, windowwidth, 4,QColor(80,  50, 20));
+
+    p.setPen(QPen(QColor(255, 255, 255, 70), 2, Qt::DashLine));
+    p.drawLine(windowwidth / 2, 0, windowwidth / 2, levelfloor);
+
+    dibujo_jugador(p, player1, animFramePlayer1, Frente_derecho_player1);
+    dibujo_jugador(p, player2, animFramePlayer2, Frente_derecho_player2);
+
+    if (!spriteBall.isNull()) {
+        int fw = spriteBall.width() / 7;
+        QPixmap ballFrame = spriteBall.copy(animFrameBall * fw, 0, fw, spriteBall.height());
+        p.drawPixmap(int(balon->x - balon->radius),
+                     int(balon->y - balon->radius),
+                     int(balon->radius * 2),
+                     int(balon->radius * 2),
+                     ballFrame);
+    } else {
+        p.setBrush(Qt::white);
+        p.setPen(Qt::NoPen);
+        p.drawEllipse(QPointF(balon->x, balon->y),
+                      double(balon->radius), double(balon->radius));
+    }
+}
+
+void Game_mode1::keyPressEvent(QKeyEvent *event)
+{
+    player1->keypush(event->key());
+}
+
+void Game_mode1::keyReleaseEvent(QKeyEvent *event)
+{
+    player1->keydrop(event->key());
+}
+
+void Game_mode1::updateIA()
+{
+    float p2CX = player2->x + player2->width / 2.0f;
+
+    bool moveLeft  = (p2CX    - balon->x) > 25.0f;
+    bool moveRight = (balon->x - p2CX)    > 25.0f;
+
+    if (player2->x < windowwidth / 2) moveLeft = false;
+
+    player2->controlIA(moveLeft, moveRight);
+
+    if (std::abs(balon->x - p2CX) < 120.0f &&
+        balon->y < player2->y + player2->height * 0.5f &&
+        player2->down)
+    {
+        player2->jump();
+    }
+
+    // Actualizar dirección visual
+    if (moveLeft) Frente_derecho_player2 = false;
+    else if (moveRight) Frente_derecho_player2  = true;
+    else Frente_derecho_player2 = (balon->x > p2CX);
+}
+
+void Game_mode1::dibujo_jugador(QPainter &p, player *pl, int animFrame, bool facingRight)
+{
+    QPixmap frame;
+
+    if (!pl->down) {
+        if (!spriteSalto.isNull()) {
+            int fw = spriteSalto.width() / 4;
+            frame  = spriteSalto.copy(2 * fw, 0, fw, spriteSalto.height());
+        }
+    } else if (std::abs(pl->vx) > 10.0f) {
+        if (!spriteRun.isNull()) {
+            int fw = spriteRun.width() / 4;
+            frame  = spriteRun.copy((animFrame % 4) * fw, 0, fw, spriteRun.height());
+        }
+    } else {
+        if (!spriteSalto.isNull()) {
+            int fw = spriteSalto.width() / 4;
+            frame  = spriteSalto.copy(0, 0, fw, spriteSalto.height());
+        }
+    }
+
+
+    if (frame.isNull()) {
+        p.fillRect(QRectF(pl->x, pl->y, pl->width, pl->height),
+                   QColor(0, 120, 255, 180));
+        return;
+    }
+
+    p.save();
+    if (!facingRight) {
+        p.translate(pl->x + pl->width, pl->y);
+        p.scale(-1.0, 1.0);
+        p.drawPixmap(0, 0, int(pl->width), int(pl->height), frame);
+    } else {
+        p.drawPixmap(int(pl->x), int(pl->y), int(pl->width), int(pl->height), frame);
+    }
+    p.restore();
 }
