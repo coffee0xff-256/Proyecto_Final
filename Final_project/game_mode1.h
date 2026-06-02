@@ -16,11 +16,14 @@ public:
     void jump();
     void keypush(int key);
     void keydrop(int key);
+    void golpear();
 
     float x, y;
     float vx, vy;
     float width, height;
     bool down;
+    bool golpeando();
+
 
 private:
     float gravity;
@@ -30,6 +33,7 @@ private:
     int keyIzq;
     int keyDer;
     int keysalto;
+    int keygolpe;
 
     bool pushIzq;
     bool pushDer;
@@ -73,16 +77,16 @@ protected:
     void keyReleaseEvent(QKeyEvent *event)override;
 
 private slots:
-    void update();
+    void actualizar();
 
 private:
     QTimer *gameTimer;
     player *player1 ;
     player *player2;
-    ball *ball;
+    ball *balon;
 
     int windowwidth = 1080;
-    int windowhwight = 720;
+    int windowheight= 720;
     int levelfloor= 600;
 
 

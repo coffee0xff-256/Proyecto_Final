@@ -89,6 +89,11 @@ void MainWindow::background_move()
 
 }
 
+void MainWindow::on_label_linkActivated(const QString &link)
+{
+    Q_UNUSED(link);
+}
+
 
 
 
