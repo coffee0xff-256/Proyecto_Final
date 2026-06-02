@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QKeyEvent>
+#include <QPaintEvent>
 #include <cmath>
 
 class Game_mode2 : public QWidget
@@ -13,45 +14,40 @@ public:
 
 private:
     //***********************Mapa vista cenital************************
-
-    int map1[8][8]={
-                      {1,1,1,1,1,1,1,1},
-                      {1,0,0,0,0,0,0,1},
-                      {1,0,0,0,0,0,0,1},
-                      {1,0,0,1,1,0,0,1},
-                      {1,0,0,1,1,0,0,1},
-                      {1,0,0,0,0,0,0,1},
-                      {1,0,0,0,0,0,0,1},
-                      {1,1,1,1,1,1,1,1}};
+    int map1[8][8] = {
+        {1,1,1,1,1,1,1,1},
+        {1,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,1},
+        {1,0,0,1,1,0,0,1},
+        {1,0,0,1,1,0,0,1},
+        {1,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,1},
+        {1,1,1,1,1,1,1,1}
+    };
 
     int vida = 100;
     double playerx = 2.5;
     double playery = 2.5;
- //***********************Enemy************************
 
+    //***********************Enemy************************
     bool enemyalive = true;
     double enemyx = 5.5;
     double enemyy = 3.5;
 
-
-//***********************Movimiento********************************
+    //***********************Movimiento********************************
     double angle = 0;
-//***********************Movimiento********************************
 
-//**********************Raycasting********************************
-    double fov = M_PI /3.0;
-//**********************Raycasting********************************
-signals:
+    //**********************Raycasting********************************
+    double fov = M_PI / 3.0;
+    int numrays = 120; // Movido aquí para poder usarlo como tamaño del Z-buffer dinámicamente si quisieras
+
+    // Z-Buffer para ocultar al enemigo detrás de las paredes
+    double zbuffer[120];
 
 protected:
-//************ESQUELETO*****************************
-    void paintEvent(QPaintEvent *event) override ;
-//************ESQUELETO*****************************
-
-//***********************Movimiento********************************
-   //void paintEvent(QPaintEvent * event) override;
-   void keyPressEvent(QKeyEvent * event) override;
-//***********************Movimiento********************************
+    //************ESQUELETO*****************************
+    void paintEvent(QPaintEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 };
 
 #endif // GAME_MODE2_H

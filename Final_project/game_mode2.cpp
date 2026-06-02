@@ -112,6 +112,10 @@ painter.drawEllipse(enemyx * tilesize - 5,enemyy * tilesize - 5,10,10);}
         double distancia = sqrt((rayx-playerx)*(rayx *playerx)+(rayy-playery)*(rayy-playery));
         distancia *= cos(rayangle -angle);
 
+        // modelamiento 3d del enemy
+
+        zbuffer[i] = distancia;
+
 
         //Aqui van las sombras del 3d
         int brillo = 255 - distancia * 40;
@@ -122,6 +126,21 @@ painter.drawEllipse(enemyx * tilesize - 5,enemyy * tilesize - 5,10,10);}
 
         int wallaltura = 1080/ distancia;
         int screenx = 700+i * 5;
+
+        int rayindex = (double)screenx / width() * numrays;
+
+        int spriteHeight = 400 / distancia;
+        int spriteWeight = spriteHeight / 2;
+
+
+        if(rayindex >= 0 && rayindex < numrays){
+
+            if(distancia < zbuffer[rayindex]){
+
+                painter.drawRect(screenx - spriteWeight/2, height()/2-spriteHeight/2,spriteWeight,spriteHeight);
+            }
+
+        }
 
 
         int wallTop = height()/2 - wallaltura/2;
@@ -165,7 +184,12 @@ painter.drawEllipse(enemyx * tilesize - 5,enemyy * tilesize - 5,10,10);}
             painter.setBrush(Qt::red);
             painter.drawRect(screenx - spriteWeight/2, height()/2-spriteHeight/2,spriteWeight,spriteHeight);
 
+
+
         }
+
+
+
 
     }}
     if(vida < 0){vida = 0;}
@@ -197,6 +221,8 @@ painter.drawEllipse(enemyx * tilesize - 5,enemyy * tilesize - 5,10,10);}
 //lineas horizontales
     painter.setPen(QPen(Qt::white,2));
     painter.drawLine(centerx , centery-10, centerx,centery+10);
+
+
 
 
 }
