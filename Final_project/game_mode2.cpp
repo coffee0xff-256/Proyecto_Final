@@ -1,249 +1,287 @@
 #include "game_mode2.h"
 #include <QPainter>
-
+#include <QColor>
+#include <QPen>
+#include <QPixmap>
 Game_mode2::Game_mode2(QWidget *parent)
     : QWidget{parent}
 {
-    setFixedSize(1536,1024);
+    setFixedSize(1536, 1024);
     setWindowTitle("Game_mode2");
-
-//***********************Movimiento********************************
     setFocusPolicy(Qt::StrongFocus);
-//***********************Movimiento********************************
 
+    enemysprite.load("xd.png");
+    pistolasprite.load("pistola2.png");
+    texturawall.load("wall1.png");
+    heaven.load("heaven2.png");
+    Floor.load("floor.png");
 }
-//************ESQUELETO*****************************
-void Game_mode2::paintEvent(QPaintEvent *event){
+
+void Game_mode2::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
-    painter.fillRect(rect(),Qt::black);
+    painter.fillRect(rect(), Qt::black);
     painter.setPen(Qt::white);
-    painter.drawText(450,360,"GAME MODE 2");
-//************ESQUELETO*****************************
+    painter.drawText(450, 360, "GAME MODE 2");
 
-//***********Mapa vista cenital**********************
+    //***********Mapa vista cenital (2D)**********************
     int tilesize = 50;
-    for(int fila = 0;fila < 8;fila++){
-        for(int columna = 0;columna < 8; columna++){
-            if(map1[fila][columna]== 1){
-                painter.fillRect(columna * tilesize , fila * tilesize , tilesize,tilesize,Qt::white);
+    for (int fila = 0; fila < 8; fila++) {
+        for (int columna = 0; columna < 8; columna++) {
+            if (map1[fila][columna] == 1) {
+                painter.fillRect(columna * tilesize, fila * tilesize, tilesize, tilesize, Qt::white);
             }
-
-            painter.drawRect(columna * tilesize , fila * tilesize , tilesize,tilesize);
+            painter.setPen(QPen(Qt::gray, 1));
+            painter.drawRect(columna * tilesize, fila * tilesize, tilesize, tilesize);
         }
-}
-    double dx = playerx - enemyx;
-    double dy = playery - enemyy;
+    }
 
+    // Dibujo del personaje en 2D
+    painter.setBrush(Qt::red);
+    painter.setPen(Qt::NoPen);
+    painter.drawEllipse(playerx * tilesize - 5, playery * tilesize - 5, 10, 10);
 
-//Aqui dibujo el personaje
+    // Dibujo del enemigo en 2D
+    if (enemyalive) {
+        painter.setBrush(Qt::blue);
+        painter.drawEllipse(enemyx * tilesize - 5, enemyy * tilesize - 5, 10, 10);
+    }
 
-painter.setBrush(Qt::red);
-painter.drawEllipse(
-        playerx * tilesize - 5,
-        playery * tilesize -5,
-        10,10
-        );
-
-
-//Aqui dibujo el enemigo
-
-if(enemyalive)
-{painter.setBrush(Qt::blue);
-painter.drawEllipse(enemyx * tilesize - 5,enemyy * tilesize - 5,10,10);}
-
-//***********Mapa vista cenital**********************
-
-//***********************Movimiento********************************
-    //Aqui hay movimiento y visión
-
+    // Línea de visión 2D
     int linelenght = 30;
     int x1 = playerx * tilesize;
     int y1 = playery * tilesize;
     int x2 = x1 + cos(angle) * linelenght;
     int y2 = y1 + sin(angle) * linelenght;
-    painter.setPen(QPen(Qt::green,2));
-    painter.drawLine(x1,y1,x2,y2);
+    painter.setPen(QPen(Qt::green, 2));
+    painter.drawLine(x1, y1, x2, y2);
 
-//***********************Movimiento********************************
+    //********************** 3D RAYCASTING ********************************
+    int viewportX = 400;
+    int viewportWidth = width() - viewportX;
+    double rayWidth = (double)viewportWidth / numrays; // Ancho dinámico de cada rayo en pantalla
 
-//**********************Raycasting********************************
-    int numrays = 120;
- //**********************3D***************************************
-    //el cielo y el piso
+    // Cielo y Piso
 
-    painter.fillRect(400,0,width()-400,height()/2,Qt::darkBlue);
-    painter.fillRect(400,height()/2,width()-400,height()/2,Qt::darkGray);
+    painter.fillRect(viewportX, 0, viewportWidth, height() / 2, heaven);
+    painter.fillRect(viewportX, height() / 2, viewportWidth, height() / 2, Qt::darkGray);
 
-
- //**********************3D***************************************
-
-    for(int i = 0; i < numrays; i++)
-    {
-        double rayangle =
-            angle - fov/2 +
-            (double)i / numrays * fov;
-
+    for (int i = 0; i < numrays; i++) {
+        double rayangle = angle - fov / 2 + (double)i / numrays * fov;
         double rayx = playerx;
         double rayy = playery;
-
         double paso = 0.02;
 
-        while(true)
-        {
+        while (true) {
             rayx += cos(rayangle) * paso;
             rayy += sin(rayangle) * paso;
-
-            if(map1[(int)rayy][(int)rayx] == 1)
-                break;
+            if (map1[(int)rayy][(int)rayx] == 1) break;
         }
 
-        painter.setPen(QPen(Qt::gray,1));
-
-        painter.drawLine(
-            playerx * tilesize,
-            playery * tilesize,
-            rayx * tilesize,
-            rayy * tilesize
-            );
- //**********************Raycasting********************************
-
- //**********************3D***************************************
-
-        double distancia = sqrt((rayx-playerx)*(rayx *playerx)+(rayy-playery)*(rayy-playery));
-        distancia *= cos(rayangle -angle);
+        // Rayos en el mapa 2D
+        painter.setPen(QPen(Qt::gray, 1));
+        painter.drawLine(playerx * tilesize, playery * tilesize, rayx * tilesize, rayy * tilesize);
 
 
-        //Aqui van las sombras del 3d
+        double distancia = sqrt((rayx - playerx) * (rayx - playerx) + (rayy - playery) * (rayy - playery));
+        distancia *= cos(rayangle - angle); // Corrección de ojo de pez
+
+        // para la textura de las paredes
+        double hitx = rayx - floor(rayx);
+        double hity = rayy - floor(rayy);
+        double texcoordenada;
+
+        if(hitx < 0.01 || hitx > 0.99){
+            texcoordenada = hity;
+        }
+        else{
+            texcoordenada = hitx;
+        }
+
+        int texturex = texcoordenada * texturawall.width();
+
+        zbuffer[i] = distancia; // Guardamos la distancia en el Z-Buffer
+
+        // Sombreado
         int brillo = 255 - distancia * 40;
-        if(brillo < 30){brillo = 30;}
-        if(brillo > 255){brillo = 255;}
+        if (brillo < 30) brillo = 30;
+        if (brillo > 255) brillo = 255;
+        QColor color(brillo, brillo, brillo);
 
-        QColor color(brillo,brillo,brillo);
+        int wallaltura = 1080 / distancia;
+        double screenx = viewportX + i * rayWidth;
 
-        int wallaltura = 1080/ distancia;
-        int screenx = 700+i * 5;
+        int wallTop = height() / 2 - wallaltura / 2;
+        int wallBottom = height() / 2 + wallaltura / 2;
+
+        painter.drawPixmap(QRect(screenx,wallTop,rayWidth +1,wallaltura),texturawall,QRect(texturex,0,1,texturawall.height()));
 
 
-        int wallTop = height()/2 - wallaltura/2;
-        int wallBottom = height()/2 + wallaltura/2;
-
-        painter.setPen(QPen(color,4));
-        painter.drawLine(screenx,wallTop,screenx,wallBottom);
     }
 
- //**********************3D***************************************
+    //*********************** ENEMIGO 3D ************************
+    double dx = playerx - enemyx;
+    double dy = playery - enemyy;
+    double distanciaEnemigo = sqrt(dx * dx + dy * dy);
 
-//***********************distancia enemigo************************
-    double distanciaEnemigo = sqrt(dx *dx+dy*dy);
-    if(distanciaEnemigo > 0.2){
-    if( enemyalive && distanciaEnemigo > 0.2)
-        {vida--;}}
-    if(vida < 0){vida = 0;}
-    if(vida <= 0)
-    {
-        painter.setPen(Qt::red);
-        painter.drawText(width()/2 - 50,height()/2,"GAME OVER");
-    }
+    if (distanciaEnemigo > 0.2) {
+        if (enemyalive) {
+            if(distanciaEnemigo < 0.7){vida --;}
 
-    painter.setPen(Qt::white);
-    painter.drawText(500,50,QString("Distancia: %1").arg(distanciaEnemigo));
-    if(distanciaEnemigo > 0.2)
-    {
-        double velocidadEnemigo = 0.01;
-        enemyx += (dx / distanciaEnemigo) * velocidadEnemigo;
-        enemyy += (dy / distanciaEnemigo) * velocidadEnemigo;
-    }
+            double dx2 = enemyx - playerx;
+            double dy2 = enemyy - playery;
 
-    painter.setPen(Qt::white);
-    painter.drawText(500,30,QString("Vida: %1").arg(vida));
+            // CORRECCIÓN 3: Uso de dy2 en lugar de dy
+            double distanciaEnemigo2 = sqrt(dx2 * dx2 + dy2 * dy2);
+            double enemyangle = atan2(dy2, dx2);
+            double angleDiferencia = enemyangle - angle;
 
-    int centerx = width() / 2;
-    int centery = height() / 2;
-//lineas verticales
-    painter.setPen(QPen(Qt::white,2));
-    painter.drawLine(
-        centerx -10, centery, centerx+10,centery);
+            while (angleDiferencia > M_PI) angleDiferencia -= 2 * M_PI;
+            while (angleDiferencia < -M_PI) angleDiferencia += 2 * M_PI;
 
-//lineas horizontales
-    painter.setPen(QPen(Qt::white,2));
-    painter.drawLine(centerx , centery-10, centerx,centery+10);
+            if (fabs(angleDiferencia) < fov / 2) {
 
 
-}
+                double rayIndexFloat = (angleDiferencia + fov / 2) / fov * numrays;
+                int rayindex = (int)rayIndexFloat;
 
-//***********************Movimiento********************************
 
-void Game_mode2::keyPressEvent(QKeyEvent *event)
-{
-    double velocidad = 0.2;
-    double rotacion = 0.1;
+                if (rayindex >= 0 && rayindex < numrays) {
+                    if (distanciaEnemigo2 < zbuffer[rayindex]) {
 
-    switch(event->key())
-    {
-    case Qt::Key_W:
-    {
-        double newx = playerx + cos(angle) * velocidad;
-        double newy = playery + sin(angle) * velocidad;
+                        double screenx = viewportX + rayIndexFloat * rayWidth;
+                        int spriteHeight = 400 / distanciaEnemigo2;
+                        int spriteWeight = spriteHeight / 2;
 
-        if(map1[(int)newy][(int)newx] == 0)
-        {
-            playerx = newx;
-            playery = newy;
-        }
+                        /*
+                        painter.setBrush(Qt::red);
+                        painter.setPen(Qt::NoPen);
+                        painter.drawRect(screenx - spriteWeight / 2, height() / 2 - spriteHeight / 2, spriteWeight, spriteHeight);
+                        */
 
-        break;
-    }
+                        painter.drawPixmap(screenx-spriteWeight/2, height()/2-spriteHeight / 2, spriteWeight,spriteHeight,enemysprite);
+                    }
 
-    case Qt::Key_S:
-    {
-        double newx = playerx - cos(angle) * velocidad;
-        double newy = playery - sin(angle) * velocidad;
-
-        if(map1[(int)newy][(int)newx] == 0)
-        {
-            playerx = newx;
-            playery = newy;
-        }
-
-        break;
-    }
-
-    case Qt::Key_Left:
-        angle -= rotacion;
-        break;
-
-    case Qt::Key_Right:
-        angle += rotacion;
-        break;
-
-    case Qt::Key_Space:
-    {
-        if(enemyalive)
-        {
-            double dx = enemyx - playerx;
-            double dy = enemyy - playery;
-
-            double distancia =
-                sqrt(dx*dx + dy*dy);
-
-            double dirx = dx / distancia;
-            double diry = dy / distancia;
-
-            double viewx = cos(angle);
-            double viewy = sin(angle);
-
-            double dot =dirx * viewx +diry * viewy;
-            if(dot > 0.95 && distancia < 4.0)
-            {
-                enemyalive = false;
+                }
             }
         }
 
+        // Movimiento del enemigo (corregido para que no transpasen las paredes)
+        double velocidadEnemigo = 0.01;
+
+        double moveX = (dx / distanciaEnemigo) * velocidadEnemigo;
+        double moveY = (dy / distanciaEnemigo) * velocidadEnemigo;
+
+        double newEnemyX = enemyx + moveX;
+        double newEnemyY = enemyy + moveY;
+
+        // Movimiento normal
+        if(map1[(int)newEnemyY][(int)newEnemyX] == 0)
+        {
+            enemyx = newEnemyX;
+            enemyy = newEnemyY;
+        }
+        else
+        {
+            // Intentar mover solo en X
+            if(map1[(int)enemyy][(int)newEnemyX] == 0)
+            {
+                enemyx = newEnemyX;
+            }
+
+            // Intentar mover solo en Y
+            if(map1[(int)newEnemyY][(int)enemyx] == 0)
+            {
+                enemyy = newEnemyY;
+            }
+        }
+    }
+
+    // UI y textos
+    if (vida < 0) vida = 0;
+    if (vida <= 0) {
+        painter.setPen(Qt::red);
+        painter.drawText(width() / 2 - 50, height() / 2, "GAME OVER");
+    }
+
+    painter.setPen(Qt::white);
+    painter.drawText(500, 50, QString("Distancia: %1").arg(distanciaEnemigo));
+    painter.drawText(500, 30, QString("Vida: %1").arg(vida));
+
+
+    // Retícula (Crosshair)
+    int centerx = viewportX + viewportWidth / 2; // Centrado en el viewport 3D
+    int centery = height() / 2;
+    painter.setPen(QPen(Qt::white, 2));
+    painter.drawLine(centerx - 10, centery, centerx + 10, centery);
+    painter.drawLine(centerx, centery - 10, centerx, centery + 10);
+
+    //disparito
+    if(disparando){
+        painter.setPen(QPen(Qt::yellow,4));
+        painter.drawLine(centerx,centery,centerx,centery - 200);
+        tiemposhoot --;
+
+        if(tiemposhoot <= 0){
+            disparando = false;
+        }
+
+    }
+
+    int gunWidth = 400;
+    int gunHeight = 300;
+    painter.drawPixmap(viewportX + viewportWidth/2 - gunWidth/2,height() - gunHeight,gunWidth,gunHeight,pistolasprite);
+
+}
+
+void Game_mode2::keyPressEvent(QKeyEvent *event) {
+    double velocidad = 0.2;
+    double rotacion = 0.1;
+
+    switch (event->key()) {
+    case Qt::Key_W: {
+        double newx = playerx + cos(angle) * velocidad;
+        double newy = playery + sin(angle) * velocidad;
+        if (map1[(int)newy][(int)newx] == 0) {
+            playerx = newx;
+            playery = newy;
+        }
         break;
     }
-
+    case Qt::Key_S: {
+        double newx = playerx - cos(angle) * velocidad;
+        double newy = playery - sin(angle) * velocidad;
+        if (map1[(int)newy][(int)newx] == 0) {
+            playerx = newx;
+            playery = newy;
+        }
+        break;
     }
+    case Qt::Key_Left:
+        angle -= rotacion;
+        break;
+    case Qt::Key_Right:
+        angle += rotacion;
+        break;
+    case Qt::Key_Space: {
+        disparando = true;
+        tiemposhoot = 5;
 
-    update();
+        if (enemyalive) {
+            double dx = enemyx - playerx;
+            double dy = enemyy - playery;
+            double distancia = sqrt(dx * dx + dy * dy);
+            double dirx = dx / distancia;
+            double diry = dy / distancia;
+            double viewx = cos(angle);
+            double viewy = sin(angle);
+            double dot = dirx * viewx + diry * viewy;
+
+            if (dot > 0.95 && distancia < 4.0) {
+                enemyalive = false;
+            }
+        }
+        break;
+    }
+    }
+    update(); // Obliga a repintar la pantalla después de procesar el input
 }
-//***********************Movimiento********************************
