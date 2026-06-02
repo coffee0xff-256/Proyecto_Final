@@ -5,6 +5,7 @@
 #include <QTimer>
 #include <QKeyEvent>
 #include <cmath>
+
 // Define structure to Player. Position save, velocity and keyboard status.
 
 class player{
@@ -17,9 +18,9 @@ public:
     void keydrop(int key);
 
     float x, y;
-    float xy, vy;
+    float vx, vy;
     float width, height;
-    bool Down;
+    bool down;
 
 private:
     float gravity;
