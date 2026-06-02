@@ -2,13 +2,15 @@
 #include <QPainter>
 #include <QColor>
 #include <QPen>
-
+#include <QPixmap>
 Game_mode2::Game_mode2(QWidget *parent)
     : QWidget{parent}
 {
     setFixedSize(1536, 1024);
     setWindowTitle("Game_mode2");
     setFocusPolicy(Qt::StrongFocus);
+
+    enemysprite.load("xd.png");
 }
 
 void Game_mode2::paintEvent(QPaintEvent *event) {
@@ -130,10 +132,15 @@ void Game_mode2::paintEvent(QPaintEvent *event) {
                         int spriteHeight = 400 / distanciaEnemigo2;
                         int spriteWeight = spriteHeight / 2;
 
+                        /*
                         painter.setBrush(Qt::red);
                         painter.setPen(Qt::NoPen);
                         painter.drawRect(screenx - spriteWeight / 2, height() / 2 - spriteHeight / 2, spriteWeight, spriteHeight);
+                        */
+
+                        painter.drawPixmap(screenx-spriteWeight/2, height()/2-spriteHeight / 2, spriteWeight,spriteHeight,enemysprite);
                     }
+
                 }
             }
         }

@@ -5,6 +5,7 @@
 #include <QKeyEvent>
 #include <QPaintEvent>
 #include <cmath>
+#include <QPixmap>
 
 class Game_mode2 : public QWidget
 {
@@ -43,6 +44,10 @@ private:
 
     // Z-Buffer para ocultar al enemigo detrás de las paredes
     double zbuffer[120];
+
+    // para el sprite del enemigo
+
+    QPixmap enemysprite;
 
 protected:
     //************ESQUELETO*****************************
