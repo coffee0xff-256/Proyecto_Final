@@ -17,6 +17,7 @@ public:
     void keypush(int key);
     void keydrop(int key);
     void golpear();
+    void controlIA(bool left, bool right);
 
     float x, y;
     float vx, vy;
@@ -80,6 +81,10 @@ private slots:
     void actualizar();
 
 private:
+
+    void updateIA();
+    void dibujo_jugador(QPainter &p, player *jugador, int frames_animados, bool frente_derecho);
+
     QTimer *gameTimer;
     player *player1 ;
     player *player2;
@@ -88,6 +93,19 @@ private:
     int windowwidth = 1080;
     int windowheight= 720;
     int levelfloor= 600;
+
+    QPixmap spriteBall;
+    QPixmap spriteRun;
+    QPixmap spriteSalto;
+    QPixmap spriteGolpe;
+
+    int animFramePlayer1 = 0;
+    int animFramePlayer2 = 0;
+    int animFrameBall = 0;
+    int animTick = 0;
+
+    bool Frente_derecho_player1 = true;
+    bool Frente_derecho_player2 = false;
 
 
 };
