@@ -49,6 +49,9 @@ private:
 
     QPixmap enemysprite;
     QPixmap pistolasprite;
+    QPixmap texturawall;
+    QPixmap heaven;
+    QPixmap Floor;
 
     // disparito
 

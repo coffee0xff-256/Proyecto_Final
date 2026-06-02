@@ -12,6 +12,9 @@ Game_mode2::Game_mode2(QWidget *parent)
 
     enemysprite.load("xd.png");
     pistolasprite.load("pistola2.png");
+    texturawall.load("wall1.png");
+    heaven.load("heaven2.png");
+    Floor.load("floor.png");
 }
 
 void Game_mode2::paintEvent(QPaintEvent *event) {
@@ -58,7 +61,8 @@ void Game_mode2::paintEvent(QPaintEvent *event) {
     double rayWidth = (double)viewportWidth / numrays; // Ancho dinámico de cada rayo en pantalla
 
     // Cielo y Piso
-    painter.fillRect(viewportX, 0, viewportWidth, height() / 2, Qt::darkBlue);
+
+    painter.fillRect(viewportX, 0, viewportWidth, height() / 2, heaven);
     painter.fillRect(viewportX, height() / 2, viewportWidth, height() / 2, Qt::darkGray);
 
     for (int i = 0; i < numrays; i++) {
@@ -81,6 +85,20 @@ void Game_mode2::paintEvent(QPaintEvent *event) {
         double distancia = sqrt((rayx - playerx) * (rayx - playerx) + (rayy - playery) * (rayy - playery));
         distancia *= cos(rayangle - angle); // Corrección de ojo de pez
 
+        // para la textura de las paredes
+        double hitx = rayx - floor(rayx);
+        double hity = rayy - floor(rayy);
+        double texcoordenada;
+
+        if(hitx < 0.01 || hitx > 0.99){
+            texcoordenada = hity;
+        }
+        else{
+            texcoordenada = hitx;
+        }
+
+        int texturex = texcoordenada * texturawall.width();
+
         zbuffer[i] = distancia; // Guardamos la distancia en el Z-Buffer
 
         // Sombreado
@@ -95,8 +113,9 @@ void Game_mode2::paintEvent(QPaintEvent *event) {
         int wallTop = height() / 2 - wallaltura / 2;
         int wallBottom = height() / 2 + wallaltura / 2;
 
-        painter.setPen(QPen(color, std::ceil(rayWidth))); // Ancho de pluma adaptado al ancho del rayo
-        painter.drawLine(screenx, wallTop, screenx, wallBottom);
+        painter.drawPixmap(QRect(screenx,wallTop,rayWidth +1,wallaltura),texturawall,QRect(texturex,0,1,texturawall.height()));
+
+
     }
 
     //*********************** ENEMIGO 3D ************************
