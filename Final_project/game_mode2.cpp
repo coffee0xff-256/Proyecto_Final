@@ -137,7 +137,37 @@ painter.drawEllipse(enemyx * tilesize - 5,enemyy * tilesize - 5,10,10);}
     double distanciaEnemigo = sqrt(dx *dx+dy*dy);
     if(distanciaEnemigo > 0.2){
     if( enemyalive && distanciaEnemigo > 0.2)
-        {vida--;}}
+        {vida--;
+
+        //enemigo en 3d
+
+        double dx2 = enemyx - playerx;
+        double dy2 = enemyy - playery;
+
+        double distanciaEnemigo2 = sqrt(dx2*dx2 + dy*dy);
+
+        double enemyangle = atan2(dy2,dx2);
+
+        double angleDiferencia = enemyangle - angle;
+
+        while(angleDiferencia > M_PI){angleDiferencia -= 2*M_PI;}
+        while(angleDiferencia < -M_PI){angleDiferencia += 2*M_PI;}
+
+        if(fabs(angleDiferencia) < fov/2){
+
+            int screenx = width()/2 + (angleDiferencia /(fov/2)) * (width()/2);
+
+            int spriteHeight = 400 / distanciaEnemigo2;
+            int spriteWeight = spriteHeight / 2;
+
+            // aqui lo dibujamos con el qpainter
+
+            painter.setBrush(Qt::red);
+            painter.drawRect(screenx - spriteWeight/2, height()/2-spriteHeight/2,spriteWeight,spriteHeight);
+
+        }
+
+    }}
     if(vida < 0){vida = 0;}
     if(vida <= 0)
     {
