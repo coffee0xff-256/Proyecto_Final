@@ -11,6 +11,7 @@ Game_mode2::Game_mode2(QWidget *parent)
     setFocusPolicy(Qt::StrongFocus);
 
     enemysprite.load("xd.png");
+    pistolasprite.load("pistola2.png");
 }
 
 void Game_mode2::paintEvent(QPaintEvent *event) {
@@ -187,12 +188,30 @@ void Game_mode2::paintEvent(QPaintEvent *event) {
     painter.drawText(500, 50, QString("Distancia: %1").arg(distanciaEnemigo));
     painter.drawText(500, 30, QString("Vida: %1").arg(vida));
 
+
     // Retícula (Crosshair)
     int centerx = viewportX + viewportWidth / 2; // Centrado en el viewport 3D
     int centery = height() / 2;
     painter.setPen(QPen(Qt::white, 2));
     painter.drawLine(centerx - 10, centery, centerx + 10, centery);
     painter.drawLine(centerx, centery - 10, centerx, centery + 10);
+
+    //disparito
+    if(disparando){
+        painter.setPen(QPen(Qt::yellow,4));
+        painter.drawLine(centerx,centery,centerx,centery - 200);
+        tiemposhoot --;
+
+        if(tiemposhoot <= 0){
+            disparando = false;
+        }
+
+    }
+
+    int gunWidth = 400;
+    int gunHeight = 300;
+    painter.drawPixmap(viewportX + viewportWidth/2 - gunWidth/2,height() - gunHeight,gunWidth,gunHeight,pistolasprite);
+
 }
 
 void Game_mode2::keyPressEvent(QKeyEvent *event) {
@@ -225,6 +244,9 @@ void Game_mode2::keyPressEvent(QKeyEvent *event) {
         angle += rotacion;
         break;
     case Qt::Key_Space: {
+        disparando = true;
+        tiemposhoot = 5;
+
         if (enemyalive) {
             double dx = enemyx - playerx;
             double dy = enemyy - playery;

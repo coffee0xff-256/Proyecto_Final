@@ -48,6 +48,12 @@ private:
     // para el sprite del enemigo
 
     QPixmap enemysprite;
+    QPixmap pistolasprite;
+
+    // disparito
+
+    bool disparando = false;
+    int tiemposhoot = 0;
 
 protected:
     //************ESQUELETO*****************************
