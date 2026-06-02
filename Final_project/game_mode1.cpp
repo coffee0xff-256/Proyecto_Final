@@ -40,3 +40,28 @@ void player::move(float dt)
 
 }
 
+//Push up only that is in the floor.
+
+
+void player::jump()
+{
+    if(down){
+        vy = fuerzasalto;
+        down = false;
+    }
+}
+
+void player::keypush(int key){
+
+    if(key == keyIzq) pushIzq = true;
+    if(key == keyDer) pushDer = true;
+    if(key == keysalto) jump();
+
+}
+
+void player::keydrop(int key){
+    if(key == keyIzq) pushIzq = false;
+    if(key == keyDer) pushDer = false;
+
+}
+
