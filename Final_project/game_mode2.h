@@ -52,6 +52,7 @@ private:
     QPixmap texturawall;
     QPixmap heaven;
     QPixmap Floor;
+    QPixmap shoot;
 
     // disparito
 

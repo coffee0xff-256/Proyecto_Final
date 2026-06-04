@@ -10,11 +10,13 @@ Game_mode2::Game_mode2(QWidget *parent)
     setWindowTitle("Game_mode2");
     setFocusPolicy(Qt::StrongFocus);
 
-    enemysprite.load("xd.png");
-    pistolasprite.load("pistola2.png");
+    enemysprite.load("xd2.png");
+    pistolasprite.load("pistola3.png");
     texturawall.load("wall1.png");
     heaven.load("heaven2.png");
     Floor.load("floor.png");
+    shoot.load("shoot.png");
+
 }
 
 void Game_mode2::paintEvent(QPaintEvent *event) {
@@ -30,7 +32,7 @@ void Game_mode2::paintEvent(QPaintEvent *event) {
             if (map1[fila][columna] == 1) {
                 painter.fillRect(columna * tilesize, fila * tilesize, tilesize, tilesize, Qt::white);
             }
-            painter.setPen(QPen(Qt::gray, 1));
+            painter.setPen(QPen(Qt::green, 1));
             painter.drawRect(columna * tilesize, fila * tilesize, tilesize, tilesize);
         }
     }
@@ -130,7 +132,6 @@ void Game_mode2::paintEvent(QPaintEvent *event) {
             double dx2 = enemyx - playerx;
             double dy2 = enemyy - playery;
 
-            // CORRECCIÓN 3: Uso de dy2 en lugar de dy
             double distanciaEnemigo2 = sqrt(dx2 * dx2 + dy2 * dy2);
             double enemyangle = atan2(dy2, dx2);
             double angleDiferencia = enemyangle - angle;
@@ -196,7 +197,7 @@ void Game_mode2::paintEvent(QPaintEvent *event) {
         }
     }
 
-    // UI y textos
+
     if (vida < 0) vida = 0;
     if (vida <= 0) {
         painter.setPen(Qt::red);
@@ -216,20 +217,30 @@ void Game_mode2::paintEvent(QPaintEvent *event) {
     painter.drawLine(centerx, centery - 10, centerx, centery + 10);
 
     //disparito
+    int gunWidth = 400;
+    int gunHeight = 300;
+    painter.drawPixmap(viewportX + viewportWidth/2 - gunWidth/2,height() - gunHeight,gunWidth,gunHeight,pistolasprite);
+    //mejora cuando se dispara
     if(disparando){
-        painter.setPen(QPen(Qt::yellow,4));
-        painter.drawLine(centerx,centery,centerx,centery - 200);
+        //painter.setPen(QPen(Qt::yellow,4));
+        //painter.drawLine(centerx,centery,centerx,centery-10);
+
+        //aqui cambiamos esto por disparo de pintura
+        painter.drawPixmap(viewportX+viewportWidth/2 - gunWidth/2,height()-gunHeight,gunWidth,gunHeight,shoot);
+
+
         tiemposhoot --;
 
         if(tiemposhoot <= 0){
             disparando = false;
+
+            //aqui normalito
+            painter.drawPixmap(viewportX + viewportWidth/2 - gunWidth/2,height() - gunHeight,gunWidth,gunHeight,pistolasprite);
+
         }
 
     }
 
-    int gunWidth = 400;
-    int gunHeight = 300;
-    painter.drawPixmap(viewportX + viewportWidth/2 - gunWidth/2,height() - gunHeight,gunWidth,gunHeight,pistolasprite);
 
 }
 
