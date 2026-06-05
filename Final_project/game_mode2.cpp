@@ -17,7 +17,7 @@ Game_mode2::Game_mode2(QWidget *parent)
 
     music->setAudioOutput(audioOutput);
 
-    music->setSource(QUrl("music2.mp3"));
+    music->setSource(QUrl(":/sounds_gm2/music2.mp3"));
 
     audioOutput->setVolume(0.3);
 
@@ -28,7 +28,7 @@ Game_mode2::Game_mode2(QWidget *parent)
 
     gunSound->setAudioOutput(gunAudio);
 
-    gunSound->setSource(QUrl("shoot.mp3"));
+    gunSound->setSource(QUrl(":/sounds_gm2/shoot.mp3"));
 
     //fijamos los pixeles de la pantalla
     setFixedSize(1536, 1024);
@@ -41,20 +41,20 @@ Game_mode2::Game_mode2(QWidget *parent)
 
     // carga de los enemigos del vector
 
-    spritesDisponibles.push_back(QPixmap("xd2.png"));
-    spritesDisponibles.push_back(QPixmap("eskeletin.png"));
-    spritesDisponibles.push_back(QPixmap("arañita.png"));
-    spritesDisponibles.push_back(QPixmap("brujito.png"));
+    spritesDisponibles.push_back(QPixmap(":/sprites_gm2/xd2.png"));
+    spritesDisponibles.push_back(QPixmap(":/sprites_gm2/eskeletin.png"));
+    spritesDisponibles.push_back(QPixmap(":/sprites_gm2/spidercita.png"));
+    spritesDisponibles.push_back(QPixmap(":/sprites_gm2/brujito.png"));
 
     //los sprites que utilice
 
 
-    pistolasprite.load("pistola2.png");
-    texturawall.load("wall1.png");
-    heaven.load("heaven2.png");
-    Floor.load("floor.png");
-    shoot.load("shoot3.png");
-    center_shot.load("center_shot.png");
+    pistolasprite.load(":/sprites_gm2/pistola2.png");
+    texturawall.load(":/textures_gm2/wall1.png");
+    heaven.load(":/textures_gm2/heaven2.png");
+    //Floor.load("floor.png");
+    shoot.load(":/sprites_gm2/shoot3.png");
+    center_shot.load(":/sprites_gm2/center_shot.png");
 
     cargarNivel();
 
