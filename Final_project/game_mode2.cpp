@@ -11,11 +11,12 @@ Game_mode2::Game_mode2(QWidget *parent)
     setFocusPolicy(Qt::StrongFocus);
 
     enemysprite.load("xd2.png");
-    pistolasprite.load("pistola3.png");
+    pistolasprite.load("pistola2.png");
     texturawall.load("wall1.png");
     heaven.load("heaven2.png");
     Floor.load("floor.png");
-    shoot.load("shoot.png");
+    shoot.load("shoot3.png");
+    center_shot.load("center_shot.png");
 
 }
 
@@ -228,7 +229,10 @@ void Game_mode2::paintEvent(QPaintEvent *event) {
         //aqui cambiamos esto por disparo de pintura
         painter.drawPixmap(viewportX+viewportWidth/2 - gunWidth/2,height()-gunHeight,gunWidth,gunHeight,shoot);
 
+        //en el centro de la pantalla el pinturazo
 
+        //toca ajustarlo de manera manual
+        painter.drawPixmap(centerx -25 ,centery - 25 ,50,50,center_shot);
         tiemposhoot --;
 
         if(tiemposhoot <= 0){
@@ -236,6 +240,7 @@ void Game_mode2::paintEvent(QPaintEvent *event) {
 
             //aqui normalito
             painter.drawPixmap(viewportX + viewportWidth/2 - gunWidth/2,height() - gunHeight,gunWidth,gunHeight,pistolasprite);
+
 
         }
 

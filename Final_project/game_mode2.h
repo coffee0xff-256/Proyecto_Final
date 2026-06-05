@@ -53,6 +53,7 @@ private:
     QPixmap heaven;
     QPixmap Floor;
     QPixmap shoot;
+    QPixmap center_shot;
 
     // disparito
 
