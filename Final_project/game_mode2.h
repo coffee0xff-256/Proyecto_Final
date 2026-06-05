@@ -9,7 +9,7 @@
 #include <QPixmap>
 #include <vector>
 
-// Seguimos usando nuestra clase Enemigo
+//implementacion de POO, para los enemigos.
 class Enemigo {
 public:
     double x;
@@ -19,6 +19,8 @@ public:
     QPixmap sprite;
     double distanciaAlJugador;
 
+
+    // utilizo los start para sobrecargas de enemigos mas adelante
     Enemigo(double startX, double startY, double vel, QPixmap tex) {
         x = startX;
         y = startY;
@@ -39,7 +41,7 @@ private slots:
     void bucleJuego();
 
 private:
-    //*********************** Mapa vista cenital (MAZMORRA 16x16) ************************
+    // mapa con vista cenital
     int map1[16][16] = {
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
         {1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1},
@@ -60,24 +62,28 @@ private:
     };
 
     int vida = 100;
-    // Te aparecemos en una esquina segura de la mazmorra
+
+    //aqui spawneamos al jugador
+
     double playerx = 1.5;
     double playery = 1.5;
 
-    //*********************** Sistema de Niveles ************************
+    //niveles, asi tambien como los diferentes enemigos, mediante un vector
     int nivelActual = 1;
     std::vector<Enemigo> listaEnemigos;
     std::vector<QPixmap> spritesDisponibles;
 
-    //***********************Motor y Movimiento********************************
+    // inicio del motor y el movimiento
     double angle = 0;
     QTimer *timerJuego;
 
-    //**********************Raycasting********************************
+    //implementacion e inicio del raycasting
     double fov = M_PI / 3.0;
     int numrays = 120;
     double zbuffer[120];
 
+
+    //los diferentes sprites que utilizamos
     QPixmap pistolasprite;
     QPixmap texturawall;
     QPixmap heaven;

@@ -8,16 +8,24 @@
 Game_mode2::Game_mode2(QWidget *parent)
     : QWidget{parent}
 {
+    //fijamos los pixeles de la pantalla
     setFixedSize(1536, 1024);
     setWindowTitle("Game_mode2");
+
+    //deteccion de eventos del teclado
     setFocusPolicy(Qt::StrongFocus);
 
     srand(time(NULL));
+
+    // carga de los enemigos del vector
 
     spritesDisponibles.push_back(QPixmap("xd2.png"));
     spritesDisponibles.push_back(QPixmap("eskeletin.png"));
     spritesDisponibles.push_back(QPixmap("arañita.png"));
     spritesDisponibles.push_back(QPixmap("brujito.png"));
+
+    //los sprites que utilice
+
 
     pistolasprite.load("pistola2.png");
     texturawall.load("wall1.png");
@@ -29,7 +37,11 @@ Game_mode2::Game_mode2(QWidget *parent)
     cargarNivel();
 
     timerJuego = new QTimer(this);
+
+    // aqui conectamos la señal que nos saca el .h para el tiempo de ejecución del videojuego
     connect(timerJuego, &QTimer::timeout, this, &Game_mode2::bucleJuego);
+
+    // aqui inicializamos en 16 ms approx 60 frames en qt
     timerJuego->start(16);
 }
 
@@ -38,10 +50,9 @@ void Game_mode2::cargarNivel() {
     int cantidadEnemigos = 0;
     double velocidadBase = 0;
 
-    // AQUÍ REDUJE CONSIDERABLEMENTE LA VELOCIDAD Y LA CANTIDAD
     if (nivelActual == 1) {
         cantidadEnemigos = 5;
-        velocidadBase = 0.005; // Muy lentos para que te acostumbres
+        velocidadBase = 0.005;
     }
     else if (nivelActual == 2) {
         cantidadEnemigos = 10;
@@ -53,13 +64,13 @@ void Game_mode2::cargarNivel() {
     }
 
     while (listaEnemigos.size() < cantidadEnemigos) {
-        // Ahora el mapa es de 16x16, así que buscamos posiciones hasta 16
+
+        // como tenemos un mapa de 16x16 tenemos 16 pixeles en ambos ejes
         int posX = rand() % 16;
         int posY = rand() % 16;
 
         if (map1[posY][posX] == 0 && (posX != (int)playerx || posY != (int)playery)) {
 
-            // Un poco de aleatoriedad en la velocidad para que no parezcan robots
             double velVariada = velocidadBase + ((rand() % 5) / 1000.0);
 
             QPixmap spriteAleatorio = spritesDisponibles[rand() % spritesDisponibles.size()];
@@ -121,8 +132,6 @@ void Game_mode2::bucleJuego() {
                 if(map1[(int)nextY][(int)listaEnemigos[i].x] == 0) listaEnemigos[i].y = nextY;
             }
         } else {
-            // Te reduje el daño para que el juego dure más si te arrinconan
-            // Lo cambié a probabilidad: Solo te quitan vida de vez en cuando (aprox 10 veces por seg)
             if(rand() % 6 == 0) vida -= 1;
         }
     }
@@ -152,8 +161,7 @@ void Game_mode2::paintEvent(QPaintEvent *event) {
     painter.setPen(Qt::white);
     painter.drawText(450, 360, "GAME MODE 2");
 
-    //***********Mapa vista cenital (2D)**********************
-    // Reduje el tamaño de los tiles a 25 para que el mapa de 16x16 quepa en el espacio de 400px
+    // el tamaña de los pixeles nos interesa, para dividir la pantalla
     int tilesize = 25;
     for (int fila = 0; fila < 16; fila++) {
         for (int columna = 0; columna < 16; columna++) {
@@ -169,7 +177,7 @@ void Game_mode2::paintEvent(QPaintEvent *event) {
     painter.setPen(Qt::NoPen);
     painter.drawEllipse(playerx * tilesize - 5, playery * tilesize - 5, 10, 10);
 
-    //********************** 3D RAYCASTING ********************************
+    // empezamos hacer los truquitos del falso 3d
     int viewportX = 400;
     int viewportWidth = width() - viewportX;
     double rayWidth = (double)viewportWidth / numrays;
@@ -186,7 +194,10 @@ void Game_mode2::paintEvent(QPaintEvent *event) {
         while (true) {
             rayx += cos(rayangle) * paso;
             rayy += sin(rayangle) * paso;
-            // Asegurar que el rayo no salga del límite del arreglo (0 a 15)
+
+
+            // condicion para que el rayo no se salga
+
             if (rayx < 0 || rayx >= 16 || rayy < 0 || rayy >= 16) break;
             if (map1[(int)rayy][(int)rayx] == 1) break;
         }
@@ -208,7 +219,7 @@ void Game_mode2::paintEvent(QPaintEvent *event) {
         painter.drawPixmap(QRect(screenx,wallTop,rayWidth +1,wallaltura),texturawall,QRect(texturex,0,1,texturawall.height()));
     }
 
-    //*********************** ENEMIGOS 3D ************************
+    //apartado de los enemigos
     std::vector<Enemigo*> enemigosRender;
     for (int i = 0; i < listaEnemigos.size(); i++) {
         if (listaEnemigos[i].vivo) enemigosRender.push_back(&listaEnemigos[i]);
@@ -220,7 +231,7 @@ void Game_mode2::paintEvent(QPaintEvent *event) {
 
     for (Enemigo* e : enemigosRender) {
         painter.setBrush(Qt::blue);
-        painter.drawEllipse(e->x * tilesize - 3, e->y * tilesize - 3, 6, 6); // Puntos más pequeños en el minimapa
+        painter.drawEllipse(e->x * tilesize - 3, e->y * tilesize - 3, 6, 6);
 
         double dx2 = e->x - playerx;
         double dy2 = e->y - playery;
@@ -270,7 +281,7 @@ void Game_mode2::paintEvent(QPaintEvent *event) {
 void Game_mode2::keyPressEvent(QKeyEvent *event) {
     if (vida <= 0) return;
 
-    // Aquí puedes cambiar tu propia velocidad si también sientes que te mueves muy rápido
+    // mis variables que puedo mejorar
     double velocidad = 0.15;
     double rotacion = 0.1;
 
