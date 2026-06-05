@@ -12,6 +12,7 @@
 // librerias para la musiquita
 #include <QMediaPlayer>
 #include <QAudioOutput>
+#include <QUrl>
 
 
 //implementacion de POO, para los enemigos.

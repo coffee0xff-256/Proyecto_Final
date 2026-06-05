@@ -17,7 +17,7 @@ Game_mode2::Game_mode2(QWidget *parent)
 
     music->setAudioOutput(audioOutput);
 
-    music->setSource(QUrl(":/sounds_gm2/music2.mp3"));
+    music->setSource(QUrl("qrc:/musica/sounds_gm2/music.mp3"));
 
     audioOutput->setVolume(0.3);
 
@@ -28,7 +28,7 @@ Game_mode2::Game_mode2(QWidget *parent)
 
     gunSound->setAudioOutput(gunAudio);
 
-    gunSound->setSource(QUrl(":/sounds_gm2/shoot.mp3"));
+    gunSound->setSource(QUrl("qrc:/musica/sounds_gm2/shoot.mp3"));
 
     //fijamos los pixeles de la pantalla
     setFixedSize(1536, 1024);
