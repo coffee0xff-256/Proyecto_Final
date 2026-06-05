@@ -6,6 +6,12 @@
 #include <QLabel>
 #include <QPixmap>
 
+#include <QMediaPlayer>
+#include <QAudioOutput>
+#include <QUrl>
+
+
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -43,6 +49,11 @@ private:
     //mejoramiento del menu//
     QLabel* background1;
     QLabel* background2;
+
+    //musica del menu
+    QMediaPlayer *menumusic;
+    QAudioOutput *menuOutput;
+
 
 
 };

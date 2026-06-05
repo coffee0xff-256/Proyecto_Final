@@ -11,6 +11,20 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+
+    //musiquita
+
+    menuOutput = new QAudioOutput(this);
+    menumusic = new QMediaPlayer(this);
+
+    menumusic->setAudioOutput(menuOutput);
+
+    menumusic->setSource(QUrl("qrc:/musica/sounds_gm2/menu.mp3"));
+
+    menuOutput->setVolume(0.3);
+
+    menumusic->play();
+
     //***********************Start background move******
 
 
@@ -29,9 +43,9 @@ MainWindow::MainWindow(QWidget *parent)
     background->lower();*/
     background1 = new QLabel(this);
     background2 = new QLabel(this);
-    QPixmap imagen1("background3.png");
+    QPixmap imagen1(":/textures_gm2/background3.png");
     //escalar la imagen para cuando maximicemos no queden esos huecos blancos
-    QPixmap imagen2("background3.png");
+    QPixmap imagen2(":/textures_gm2/background3.png");
     background1->setPixmap(imagen1);
     background2->setPixmap(imagen2);
     background1->resize(1536,1024);
@@ -55,6 +69,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_button_game_mode1_clicked()
 {
+    menumusic->stop();
     Game_mode1* game1 = new Game_mode1();
     game1->show();
     hide();
@@ -63,6 +78,7 @@ void MainWindow::on_button_game_mode1_clicked()
 
 void MainWindow::on_button_game_mode2_clicked()
 {
+    menumusic->stop();
     Game_mode2* game2 = new Game_mode2();
     game2->show();
     hide();
