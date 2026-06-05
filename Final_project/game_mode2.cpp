@@ -5,9 +5,31 @@
 #include <algorithm>
 #include <QTime>
 
+#include <QMediaPlayer>
+#include <QAudioOutput>
+
 Game_mode2::Game_mode2(QWidget *parent)
     : QWidget{parent}
 {
+    //musiquita
+    audioOutput = new QAudioOutput(this);
+    music = new QMediaPlayer(this);
+
+    music->setAudioOutput(audioOutput);
+
+    music->setSource(QUrl("music2.mp3"));
+
+    audioOutput->setVolume(0.3);
+
+    music->play();
+
+    gunAudio = new QAudioOutput(this);
+    gunSound = new QMediaPlayer(this);
+
+    gunSound->setAudioOutput(gunAudio);
+
+    gunSound->setSource(QUrl("shoot.mp3"));
+
     //fijamos los pixeles de la pantalla
     setFixedSize(1536, 1024);
     setWindowTitle("Game_mode2");
@@ -305,6 +327,10 @@ void Game_mode2::keyPressEvent(QKeyEvent *event) {
         angle += rotacion;
         break;
     case Qt::Key_Space: {
+
+        //sonidito
+        gunSound->setPosition(0);
+        gunSound->play();
         if (!disparando) {
             disparando = true;
             tiemposhoot = 8;

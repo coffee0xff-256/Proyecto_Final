@@ -9,6 +9,11 @@
 #include <QPixmap>
 #include <vector>
 
+// librerias para la musiquita
+#include <QMediaPlayer>
+#include <QAudioOutput>
+
+
 //implementacion de POO, para los enemigos.
 class Enemigo {
 public:
@@ -41,6 +46,15 @@ private slots:
     void bucleJuego();
 
 private:
+
+    //musiquita
+    QMediaPlayer *music;
+    QAudioOutput *audioOutput;
+
+    QMediaPlayer *gunSound;
+    QAudioOutput *gunAudio;
+
+
     // mapa con vista cenital
     int map1[16][16] = {
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
@@ -96,6 +110,9 @@ private:
 
     void cargarNivel();
     bool colisionBalaPared(double x1, double y1, double x2, double y2);
+
+
+
 
 protected:
     void paintEvent(QPaintEvent *event) override;
