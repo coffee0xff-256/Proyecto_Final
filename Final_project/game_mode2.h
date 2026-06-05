@@ -4,8 +4,30 @@
 #include <QWidget>
 #include <QKeyEvent>
 #include <QPaintEvent>
+#include <QTimer>
 #include <cmath>
 #include <QPixmap>
+#include <vector>
+
+// Seguimos usando nuestra clase Enemigo
+class Enemigo {
+public:
+    double x;
+    double y;
+    bool vivo;
+    double velocidad;
+    QPixmap sprite;
+    double distanciaAlJugador;
+
+    Enemigo(double startX, double startY, double vel, QPixmap tex) {
+        x = startX;
+        y = startY;
+        velocidad = vel;
+        sprite = tex;
+        vivo = true;
+        distanciaAlJugador = 0.0;
+    }
+};
 
 class Game_mode2 : public QWidget
 {
@@ -13,41 +35,49 @@ class Game_mode2 : public QWidget
 public:
     explicit Game_mode2(QWidget *parent = nullptr);
 
+private slots:
+    void bucleJuego();
+
 private:
-    //***********************Mapa vista cenital************************
-    int map1[8][8] = {
-        {1,1,1,1,1,1,1,1},
-        {1,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,1},
-        {1,0,0,1,1,0,0,1},
-        {1,0,0,1,1,0,0,1},
-        {1,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,1},
-        {1,1,1,1,1,1,1,1}
+    //*********************** Mapa vista cenital (MAZMORRA 16x16) ************************
+    int map1[16][16] = {
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+        {1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,1,0,1,1,1,0,1,1,0,1},
+        {1,0,1,1,1,0,1,0,1,0,0,0,1,0,0,1},
+        {1,0,1,0,0,0,0,0,1,0,1,1,1,0,0,1},
+        {1,0,1,0,1,1,1,1,1,0,1,0,0,0,0,1},
+        {1,0,1,0,0,0,0,0,0,0,1,0,1,1,1,1},
+        {1,0,1,1,1,1,1,0,1,1,1,0,0,0,0,1},
+        {1,0,0,0,0,0,1,0,1,0,0,0,1,1,0,1},
+        {1,1,1,1,1,0,1,0,1,0,1,1,1,0,0,1},
+        {1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1},
+        {1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1},
+        {1,1,1,1,0,1,1,1,1,1,1,1,1,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
     };
 
     int vida = 100;
-    double playerx = 2.5;
-    double playery = 2.5;
+    // Te aparecemos en una esquina segura de la mazmorra
+    double playerx = 1.5;
+    double playery = 1.5;
 
-    //***********************Enemy************************
-    bool enemyalive = true;
-    double enemyx = 5.5;
-    double enemyy = 3.5;
+    //*********************** Sistema de Niveles ************************
+    int nivelActual = 1;
+    std::vector<Enemigo> listaEnemigos;
+    std::vector<QPixmap> spritesDisponibles;
 
-    //***********************Movimiento********************************
+    //***********************Motor y Movimiento********************************
     double angle = 0;
+    QTimer *timerJuego;
 
     //**********************Raycasting********************************
     double fov = M_PI / 3.0;
-    int numrays = 120; // Movido aquí para poder usarlo como tamaño del Z-buffer dinámicamente si quisieras
-
-    // Z-Buffer para ocultar al enemigo detrás de las paredes
+    int numrays = 120;
     double zbuffer[120];
 
-    // para el sprite del enemigo
-
-    QPixmap enemysprite;
     QPixmap pistolasprite;
     QPixmap texturawall;
     QPixmap heaven;
@@ -55,13 +85,13 @@ private:
     QPixmap shoot;
     QPixmap center_shot;
 
-    // disparito
-
     bool disparando = false;
     int tiemposhoot = 0;
 
+    void cargarNivel();
+    bool colisionBalaPared(double x1, double y1, double x2, double y2);
+
 protected:
-    //************ESQUELETO*****************************
     void paintEvent(QPaintEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
 };
