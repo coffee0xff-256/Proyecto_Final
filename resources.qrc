@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>textures_gm2/wall1.png</file>
+        <file>textures_gm2/heaven2.png</file>
+        <file>textures_gm2/background3.png</file>
+        <file>sprites_gm2/xd2.png</file>
+        <file>sprites_gm2/spidercita.png</file>
+        <file>sprites_gm2/shoot3.png</file>
+        <file>sprites_gm2/pistola2.png</file>
+        <file>sprites_gm2/eskeletin.png</file>
+        <file>sprites_gm2/center_shot.png</file>
+        <file>sprites_gm2/brujito.png</file>
+        <file>textures_gm2/background2.png</file>
+        <file>sounds_gm2/music.wav</file>
+    </qresource>
+</RCC>
