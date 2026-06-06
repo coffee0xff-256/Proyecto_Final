@@ -1,75 +1,197 @@
 #ifndef GAME_MODE1_H
 #define GAME_MODE1_H
+
 #include <QWidget>
 #include <QTimer>
 #include <QKeyEvent>
+#include <QPixmap>
+#include <QPainter>
+#include <QVector>
+#include <QMediaPlayer>
+#include <QAudioOutput>
 #include <cmath>
 
-//Definicion de los estados principales del juego para controlar el flujo
-enum EstadoJuego { SeleccionPersonaje, Jugando, FinDePartida };
+enum class EstadoJuego {
+    SeleccionPersonaje,
+    Jugando,
+    FinDePartida
+};
 
-//Implementacion de Jugador traer consigo informacion de fisicas, teclas y estado de golpe
+
 class Jugador {
 public:
-    Jugador(float x, float y, int keyIzq, int keyDer, int keySalto, int keyGolpe);
-    void mover(float dt);
+    Jugador(float posicionX,
+            float posicionY,
+            int   teclaMoverIzquierda,
+            int   teclaMoverDerecha,
+            int   teclaSaltar,
+            int   teclaGolpear);
+
+    void mover(float deltaTiempo);
     void saltar();
-    void keypush(int key);
-    void keydrop(int key);
-    void iniciar_golpe();
-    void actualizar_golpe();
-    void controlIA(bool left, bool right, bool jump, bool hit);
-    float x, y, vx, vy, width, height;
-    bool down;
-    bool golpeando_active() const { return estado_golpeando; }
+    void teclaPresionada(int tecla);
+    void teclaSoltada(int tecla);
+    void iniciarGolpe();
+    void actualizarGolpe();
+    void controlarConIA(bool moverIzquierda,bool moverDerecha,bool realizarSalto,bool realizarGolpe);
+    float posicionX;
+    float posicionY;
+    float velocidadX;
+    float velocidadY;
+    float anchoHitbox;
+    float altoHitbox;
+
+    bool  estaEnSuelo;
+    bool  golpeandoActivo;
+    int   timerGolpe;
+
+
+    float gravedad;
+    float velocidadMovimiento;
+    float fuerzaSalto;
+
 private:
-    float gravity, velocidadmov, fuerzasalto;
-    int keyIzq, keyDer, keysalto, keygolpe;
-    bool pushIzq, pushDer;
-    bool estado_golpeando;
-    int timer_golpe;
+
+    int teclaMoverIzquierda;
+    int teclaMoverDerecha;
+    int teclaSaltar;
+    int teclaGolpear;
+
+
+    bool presionandoIzquierda;
+    bool presionandoDerecha;
 };
 
-//Implementacion de Balon manejar fisicas de rebote y limites
 class Balon {
 public:
-    Balon(float x, float y);
-    void mover(float dt);
-    void rebote_suelo();
-    void rebote_pared();
-    void reset();
-    float x, y, vx, vy, radius, startX, startY;
+    Balon(float posicionInicialX, float posicionInicialY);
+
+    void mover(float deltaTiempo);
+    void rebotar();
+    void reiniciar();
+
+    float posicionX;
+    float posicionY;
+    float velocidadX;
+    float velocidadY;
+    float radio;
+
 private:
-    float gravity, rebotar, friction;
+    float posicionInicialX;
+    float posicionInicialY;
+    float gravedad;
+    float factorRebote;
+    float factorFriccion;
 };
 
-//Implementacion de Game_mode1 clase principal que une logica y renderizado
-class Game_mode1: public QWidget {
+class Game_mode1 : public QWidget
+{
     Q_OBJECT
+
 public:
     explicit Game_mode1(QWidget *parent = nullptr);
+
 protected:
-    void paintEvent(QPaintEvent *event) override;
-    void keyPressEvent(QKeyEvent *event) override;
-    void keyReleaseEvent(QKeyEvent *event) override;
+    void paintEvent(QPaintEvent *evento)  override;
+    void keyPressEvent(QKeyEvent *evento) override;
+    void keyReleaseEvent(QKeyEvent *evento) override;
+
 private slots:
     void actualizar();
+
 private:
-    void updateIA();
-    void dibujo_jugador(QPainter &p, Jugador *jugador, int frames_animados, bool frente_derecho);
-    void resolver_colisiones();
-    void gol_realizado(int jugador);
-    void reset_round();
-    EstadoJuego estado_actual;
-    QTimer *gameTimer;
-    Jugador *player1;
-    Jugador *player2;
-    Balon *balon;
-    int windowwidth = 1080, windowheight = 720, levelfloor = 600;
-    int scoreP1 = 0, scoreP2 = 0, tiempo_restante = 90;
-    int tick_segundo = 0;
-    QPixmap spriteBall, spriteRun, spriteSalto, spriteGolpe;
-    int animFramePlayer1 = 0, animFramePlayer2 = 0, animFrameBall = 0, animTick = 0;
-    bool Frente_derecho_player1 = true, Frente_derecho_player2 = false;
+    EstadoJuego estadoActual = EstadoJuego::SeleccionPersonaje;
+    int  personajeSeleccionado  = 0;
+    int  personajeIA            = 0;
+    int  indiceSeleccion        = 0;
+    bool confirmoSeleccion      = false;
+
+    QString nombresPersonaje[3] = { "Alex", "Lewis", "Pierre" };
+    QPixmap spritesPersonaje[3];
+    QPixmap spriteCorrerPersonaje[3];
+    QPixmap spriteSaltoPersonaje[3];
+    QPixmap spriteGolpePersonaje[3];
+
+
+    QPixmap spriteBalon;
+    QPixmap spriteCorrer;
+    QPixmap spriteSalto;
+    QPixmap spriteGolpe;
+
+    QPixmap spriteTribunas;
+    QPixmap spriteCancha;
+    QPixmap spritePorteria;
+    QPixmap spriteClock;
+    QPixmap spriteFondoSeleccion;
+
+    QMediaPlayer *musicaMenu   = nullptr;
+    QMediaPlayer *musicaJuego  = nullptr;
+    QAudioOutput *audioMenu    = nullptr;
+    QAudioOutput *audioJuego   = nullptr;
+
+    void iniciarPartida();
+    void reiniciarPartidaCompleta();
+    void actualizarIA();
+    void verificarGol();
+    void reiniciarRonda();
+    void resolverColisionJugadorBalon(Jugador *jugador, float fuerzaGolpe);
+    void resolverColisionEntreJugadores();
+    void verificarDisputaBalon();
+
+    void reproducirMusicaMenu();
+    void reproducirMusicaJuego();
+    void detenerMusica();
+
+    void dibujarSeleccionPersonaje(QPainter &pintor);
+    void dibujarFinDePartida(QPainter &pintor);
+    void dibujarFondo(QPainter &pintor);
+    void dibujarTribunas(QPainter &pintor);
+    void dibujarCancha(QPainter &pintor);
+    void dibujarPorteria(QPainter &pintor, int posicionX, bool esPorteriaIzquierda);
+    void dibujarJugador(QPainter &pintor,
+                        Jugador  *jugador,
+                        int       frameAnimacion,
+                        bool      miraDerecha,
+                        bool      estaGolpeando);
+    void dibujarBalon(QPainter &pintor);
+    void dibujarMarcador(QPainter &pintor);
+    void dibujarTimer(QPainter &pintor);
+
+    QTimer  *timerJuego;
+    Jugador *jugador1 = nullptr;
+    Jugador *jugador2 = nullptr;
+    Balon   *balon    = nullptr;
+
+    int anchoPantalla  = 1080;
+    int altoPantalla   = 720;
+    int nivelSuelo     = 600;
+
+    const int anchoPorteria  = 150;
+    const int altoPorteria   = 400;
+    const int posYPorteria   = 200;
+
+    int  puntosJugador1    = 0;
+    int  puntosJugador2    = 0;
+    int  segundosTotales   = 90;
+    int  ticksAcumulados   = 0;
+    int  ticksPorSegundo   = 62;
+    bool tiempoAgotado     = false;
+
+
+    float radioVisual = 28.0f;
+
+    int frameAnimacionJugador1 = 0;
+    int frameAnimacionJugador2 = 0;
+    int frameAnimacionBalon    = 0;
+    int frameAnimacionClock    = 0;
+    int contadorTickAnimacion  = 0;
+
+
+    bool miraDerecha_Jugador1 = true;
+    bool miraDerecha_Jugador2 = false;
+
+    int  timerFlashGol     = 0;
+    bool flashGolIzquierda = false;
 };
+
 #endif // GAME_MODE1_H

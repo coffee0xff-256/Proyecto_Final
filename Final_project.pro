@@ -27,3 +27,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     sources.qrc
+
+DISTFILES += \
+    sprites_gm1/Golpeo_Alex.png
+    sprites_gm1/Lewis.png

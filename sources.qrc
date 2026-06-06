@@ -11,10 +11,26 @@
         <file>textures_gm2/background3.png</file>
         <file>textures_gm2/background2.png</file>
         <file>sprites_gm2/xd2.png</file>
+        <file>sprites_gm1/Balon.png</file>
+        <file>sprites_gm1/Cancha.png</file>
+        <file>sprites_gm1/Lewi_Run.png</file>
+        <file>sprites_gm1/petrico.jpg</file>
+        <file>sprites_gm1/Porteria.png</file>
+        <file>sprites_gm1/Run_Alex.png</file>
+        <file>sprites_gm1/Salto_Alex.png</file>
+        <file>sprites_gm1/Tribuna.png</file>
+        <file>sprites_gm1/Alex.png</file>
+        <file>sprites_gm1/Lewis.png</file>
+        <file>sprites_gm1/Pierre.png</file>
+        <file>sprites_gm1/Jump_Lewis.png</file>
+        <file>sprites_gm1/Jump_Pierre.png</file>
+        <file>sprites_gm1/Run_Pierre.png</file>
     </qresource>
     <qresource prefix="/musica">
         <file>sounds_gm2/music.mp3</file>
         <file>sounds_gm2/shoot.mp3</file>
         <file>sounds_gm2/menu.mp3</file>
+        <file>sounds_gm1/Waka.mp3</file>
+        <file>sounds_gm1/Dai.mp3</file>
     </qresource>
 </RCC>
