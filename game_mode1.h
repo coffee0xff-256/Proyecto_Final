@@ -11,21 +11,11 @@
 #include <QAudioOutput>
 #include <cmath>
 
-enum class EstadoJuego {
-    SeleccionPersonaje,
-    Jugando,
-    FinDePartida
-};
-
+enum class EstadoJuego {SeleccionPersonaje,Jugando,FinDePartida};
 
 class Jugador {
 public:
-    Jugador(float posicionX,
-            float posicionY,
-            int   teclaMoverIzquierda,
-            int   teclaMoverDerecha,
-            int   teclaSaltar,
-            int   teclaGolpear);
+    Jugador(float posicionX,float posicionY,int   teclaMoverIzquierda,int   teclaMoverDerecha,int   teclaSaltar,int   teclaGolpear);
 
     void mover(float deltaTiempo);
     void saltar();
@@ -44,7 +34,6 @@ public:
     bool  estaEnSuelo;
     bool  golpeandoActivo;
     int   timerGolpe;
-
 
     float gravedad;
     float velocidadMovimiento;
@@ -101,10 +90,10 @@ private slots:
 
 private:
     EstadoJuego estadoActual = EstadoJuego::SeleccionPersonaje;
-    int  personajeSeleccionado  = 0;
-    int  personajeIA            = 0;
-    int  indiceSeleccion        = 0;
-    bool confirmoSeleccion      = false;
+    int  personajeSeleccionado = 0;
+    int  personajeIA = 0;
+    int  indiceSeleccion = 0;
+    bool confirmoSeleccion = false;
 
     QString nombresPersonaje[3] = { "Alex", "Lewis", "Pierre" };
     QPixmap spritesPersonaje[3];
@@ -124,10 +113,10 @@ private:
     QPixmap spriteClock;
     QPixmap spriteFondoSeleccion;
 
-    QMediaPlayer *musicaMenu   = nullptr;
-    QMediaPlayer *musicaJuego  = nullptr;
-    QAudioOutput *audioMenu    = nullptr;
-    QAudioOutput *audioJuego   = nullptr;
+    QMediaPlayer *musicaMenu = nullptr;
+    QMediaPlayer *musicaJuego = nullptr;
+    QAudioOutput *audioMenu = nullptr;
+    QAudioOutput *audioJuego = nullptr;
 
     void iniciarPartida();
     void reiniciarPartidaCompleta();
@@ -148,49 +137,45 @@ private:
     void dibujarTribunas(QPainter &pintor);
     void dibujarCancha(QPainter &pintor);
     void dibujarPorteria(QPainter &pintor, int posicionX, bool esPorteriaIzquierda);
-    void dibujarJugador(QPainter &pintor,
-                        Jugador  *jugador,
-                        int       frameAnimacion,
-                        bool      miraDerecha,
-                        bool      estaGolpeando);
+    void dibujarJugador(QPainter &pintor,Jugador  *jugador,int frameAnimacion,bool miraDerecha,bool estaGolpeando);
     void dibujarBalon(QPainter &pintor);
     void dibujarMarcador(QPainter &pintor);
     void dibujarTimer(QPainter &pintor);
 
-    QTimer  *timerJuego;
+    QTimer *timerJuego;
     Jugador *jugador1 = nullptr;
     Jugador *jugador2 = nullptr;
-    Balon   *balon    = nullptr;
+    Balon *balon = nullptr;
 
-    int anchoPantalla  = 1080;
-    int altoPantalla   = 720;
-    int nivelSuelo     = 600;
+    int anchoPantalla = 1080;
+    int altoPantalla = 720;
+    int nivelSuelo = 600;
 
-    const int anchoPorteria  = 150;
-    const int altoPorteria   = 400;
-    const int posYPorteria   = 200;
+    const int anchoPorteria = 150;
+    const int altoPorteria = 400;
+    const int posYPorteria = 200;
 
-    int  puntosJugador1    = 0;
-    int  puntosJugador2    = 0;
-    int  segundosTotales   = 90;
-    int  ticksAcumulados   = 0;
-    int  ticksPorSegundo   = 62;
-    bool tiempoAgotado     = false;
+    int  puntosJugador1 = 0;
+    int  puntosJugador2 = 0;
+    int  segundosTotales = 90;
+    int  ticksAcumulados = 0;
+    int  ticksPorSegundo = 62;
+    bool tiempoAgotado = false;
 
 
     float radioVisual = 28.0f;
 
     int frameAnimacionJugador1 = 0;
     int frameAnimacionJugador2 = 0;
-    int frameAnimacionBalon    = 0;
-    int frameAnimacionClock    = 0;
-    int contadorTickAnimacion  = 0;
+    int frameAnimacionBalon = 0;
+    int frameAnimacionClock = 0;
+    int contadorTickAnimacion = 0;
 
 
     bool miraDerecha_Jugador1 = true;
     bool miraDerecha_Jugador2 = false;
 
-    int  timerFlashGol     = 0;
+    int  timerFlashGol = 0;
     bool flashGolIzquierda = false;
 };
 

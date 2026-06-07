@@ -13,23 +13,23 @@
 Jugador::Jugador(float posicionX, float posicionY,int teclaMoverIzquierda, int teclaMoverDerecha,int teclaSaltar,int teclaGolpear)
 {
     this->posicionX = posicionX;
-    this->posicionY    = posicionY;
-    this->velocidadX          = 0;
-    this->velocidadY          = 0;
-    this->anchoHitbox         = 72;
-    this->altoHitbox          = 130;
-    this->gravedad            = 1200.0f;
+    this->posicionY = posicionY;
+    this->velocidadX = 0;
+    this->velocidadY = 0;
+    this->anchoHitbox = 72;
+    this->altoHitbox = 130;
+    this->gravedad = 1200.0f;
     this->velocidadMovimiento = 320.0f;
-    this->fuerzaSalto         = -620.0f;
+    this->fuerzaSalto = -620.0f;
     this->teclaMoverIzquierda = teclaMoverIzquierda;
-    this->teclaMoverDerecha   = teclaMoverDerecha;
-    this->teclaSaltar         = teclaSaltar;
-    this->teclaGolpear        = teclaGolpear;
+    this->teclaMoverDerecha = teclaMoverDerecha;
+    this->teclaSaltar = teclaSaltar;
+    this->teclaGolpear = teclaGolpear;
     this->presionandoIzquierda = false;
-    this->presionandoDerecha   = false;
-    this->estaEnSuelo     = false;
+    this->presionandoDerecha  = false;
+    this->estaEnSuelo = false;
     this->golpeandoActivo = false;
-    this->timerGolpe      = 0;
+    this->timerGolpe = 0;
 }
 
 void Jugador::mover(float deltaTiempo)
@@ -42,11 +42,10 @@ void Jugador::mover(float deltaTiempo)
     posicionY  += velocidadY * deltaTiempo;
 }
 
-void Jugador::controlarConIA(bool moverIzquierda, bool moverDerecha,
-                             bool realizarSalto,  bool realizarGolpe)
+void Jugador::controlarConIA(bool moverIzquierda, bool moverDerecha,bool realizarSalto,  bool realizarGolpe)
 {
     presionandoIzquierda = moverIzquierda;
-    presionandoDerecha   = moverDerecha;
+    presionandoDerecha  = moverDerecha;
     if (realizarSalto) saltar();
     if (realizarGolpe) iniciarGolpe();
 }
@@ -55,7 +54,7 @@ void Jugador::iniciarGolpe()
 {
     if (!golpeandoActivo) {
         golpeandoActivo = true;
-        timerGolpe      = 18; // frames que dura la animacion
+        timerGolpe = 8;
     }
 }
 
@@ -92,23 +91,23 @@ void Jugador::teclaSoltada(int tecla)
 // Implementacion de Balon: posicion, velocidad, gravedad y rebote.
 Balon::Balon(float posicionInicialX, float posicionInicialY)
 {
-    this->posicionX        = posicionInicialX;
-    this->posicionY        = posicionInicialY;
-    this->velocidadX       = 0;
-    this->velocidadY       = 0;
-    this->radio            = 20;
+    this->posicionX = posicionInicialX;
+    this->posicionY = posicionInicialY;
+    this->velocidadX = 0;
+    this->velocidadY = 0;
+    this->radio = 20;
     this->posicionInicialX = posicionInicialX;
     this->posicionInicialY = posicionInicialY;
-    this->gravedad         = 1200.0f;
-    this->factorRebote     = 0.62f;
-    this->factorFriccion   = 0.86f;
+    this->gravedad = 1200.0f;
+    this->factorRebote  = 0.62f;
+    this->factorFriccion= 0.86f;
 }
 
 void Balon::mover(float deltaTiempo)
 {
     velocidadY += gravedad * deltaTiempo;
-    posicionX  += velocidadX * deltaTiempo;
-    posicionY  += velocidadY * deltaTiempo;
+    posicionX += velocidadX * deltaTiempo;
+    posicionY += velocidadY * deltaTiempo;
 }
 
 void Balon::rebotar()
@@ -150,35 +149,31 @@ Game_mode1::Game_mode1(QWidget *parent)
     spriteSaltoPersonaje[1] = QPixmap(":/sprites_gm1/Jump_Lewis.png");
     spriteSaltoPersonaje[2] = QPixmap(":/sprites_gm1/Jump_Pierre.png");
 
-    // Sprites golpe — [0] Alex  [1] Lewis  [2] Pierre
-    spriteGolpePersonaje[0] = QPixmap(":/sprites_gm1/");
-    spriteGolpePersonaje[1] = QPixmap(":/sprites_gm1/");
-    spriteGolpePersonaje[2] = QPixmap(":/sprites_gm1/");
+   // Sprites golpe — [0] Alex  [1] Lewis  [2] Pierre
+    // spriteGolpePersonaje[0] = QPixmap(":/sprites_gm1/);
+    // spriteGolpePersonaje[1] = QPixmap(":/sprites_gm1/");
+    //  spriteGolpePersonaje[2] = QPixmap(":/sprites_gm1/");
 
-    // Sprites genericos (fallback)
     spriteBalon  = QPixmap(":/sprites_gm1/Balon.png");
-    spriteCorrer = QPixmap(":/sprites_gm1/Run_Generic.png");
-    spriteSalto  = QPixmap(":/sprites_gm1/Jump_Generic.png");
-    spriteGolpe  = QPixmap(":/sprites_gm1/Kick_Generic.png");
 
     // Escenario
-    spriteTribunas       = QPixmap(":/sprites_gm1/Tribuna.png");
-    spriteCancha         = QPixmap(":/sprites_gm1/Cancha.png");
-    spritePorteria       = QPixmap(":/sprites_gm1/Porteria.png");
-    spriteClock          = QPixmap(":/sprites_gm1/Reloj.png");
+    spriteTribunas = QPixmap(":/sprites_gm1/Tribuna.png");
+    spriteCancha = QPixmap(":/sprites_gm1/Cancha.png");
+    spritePorteria = QPixmap(":/sprites_gm1/Porteria.png");
+    spriteClock = QPixmap(":/sprites_gm1/Reloj.png");
     spriteFondoSeleccion = QPixmap(":/sprites_gm1/FondoSeleccion.png");
 
     // Musica
-    audioMenu  = new QAudioOutput(this);
-    audioJuego = new QAudioOutput(this);
-    musicaMenu  = new QMediaPlayer(this);
+    audioMenu = new QAudioOutput(this);
+    audioJuego= new QAudioOutput(this);
+    musicaMenu = new QMediaPlayer(this);
     musicaJuego = new QMediaPlayer(this);
     musicaMenu->setAudioOutput(audioMenu);
     musicaJuego->setAudioOutput(audioJuego);
     musicaMenu->setSource(QUrl("qrc:/musica/sounds_gm1/Dai.mp3"));
     musicaJuego->setSource(QUrl("qrc:/musica/sounds_gm1/Waka.mp3"));
-    audioMenu->setVolume(0.7f);
-    audioJuego->setVolume(0.8f);
+    audioMenu->setVolume(0.4f);
+    audioJuego->setVolume(0.4f);
     reproducirMusicaMenu();
 
     // Timer principal (16 ms ~ 62 fps)
@@ -330,8 +325,8 @@ void Game_mode1::actualizar()
         contadorTickAnimacion = 0;
         frameAnimacionJugador1 = (frameAnimacionJugador1 + 1) % 8;
         frameAnimacionJugador2 = (frameAnimacionJugador2 + 1) % 8;
-        frameAnimacionBalon    = (frameAnimacionBalon    + 1) % 6;
-        frameAnimacionClock    = (frameAnimacionClock    + 1) % 8;
+        frameAnimacionBalon = (frameAnimacionBalon    + 1) % 6;
+        frameAnimacionClock = (frameAnimacionClock    + 1) % 8;
     }
 
     ticksAcumulados++;
